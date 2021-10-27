@@ -21,6 +21,7 @@ app.use(
     max: 10,
   }),
 )
+app.get('/health', (_req, res) => res.end('ok'))
 app.use('/api', router)
 app.use(errorHandler)
 

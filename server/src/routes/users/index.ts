@@ -2,6 +2,6 @@ import { Router } from 'express'
 
 import { createAccount } from './createAccount'
 
-export const user = Router()
+export const users = Router()
 
-user.post('/', createAccount)
+users.post('/', createAccount)

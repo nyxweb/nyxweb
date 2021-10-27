@@ -1,0 +1,149 @@
+openapi: '3.0.0'
+
+info:
+  title: NyxWeb API
+  description: API Specification for NyxWeb
+  version: 0.0.1
+
+servers:
+  - url: http://localhost:5000/api
+    description: Development Environment
+
+paths:
+  /health:
+    get:
+      tags:
+        - Internal
+      summary: Health check
+      responses:
+        '200':
+          description: Health check successful
+          content:
+            text-plain:
+              schema:
+                type: string
+                example: ok
+
+  /auth:
+    post:
+      tags:
+        - Auth
+      summary: Authenticate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                  format: password
+              required:
+                - username
+                - password
+      responses:
+        '200':
+          description: Athentication successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  email:
+                    type: string
+                  created_at:
+                    type: string
+                    format: date-time
+                  bloc_code:
+                    type: string
+                    example: '0'
+                  ctl1_code:
+                    type: string
+                    example: '0'
+                  is_vip:
+                    type: string
+                    example: '0'
+                  vip_expiration:
+                    type: string
+                    example: '0'
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: nyx-auth=token
+
+        '400':
+          $ref: '#/components/responses/fail'
+
+    delete:
+      tags:
+        - Auth
+      summary: Logout - clear auth cookie
+      responses:
+        '204':
+          description: Logout successful
+
+    get:
+      tags:
+        - Auth
+      summary: Verify JWT token
+      responses:
+        '200':
+          description: JWT Token is valid
+
+  /users:
+    post:
+      tags:
+        - Users
+      summary: Create a new account.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                  format: password
+                email:
+                  type: string
+              required:
+                - username
+                - password
+                - email
+      responses:
+        '201':
+          $ref: '#/components/responses/success'
+
+        '400':
+          $ref: '#/components/responses/fail'
+
+components:
+  responses:
+    success:
+      description: Request successful
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Action successful
+
+    fail:
+      description: Request failed
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Action unsuccessful
