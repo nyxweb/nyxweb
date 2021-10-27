@@ -1,10 +1,9 @@
-import { Router } from 'express'
+import { RequestHandler } from 'express'
 import validator from 'validator'
-import { knex } from '../db'
 
-export const user = Router()
+import { knex } from 'db'
 
-user.post('/', async (req, res) => {
+export const createAccount: RequestHandler = async (req, res) => {
   const { username, password, email } = req.body
 
   if (!username || !password || !email) {
@@ -15,31 +14,21 @@ user.post('/', async (req, res) => {
     return res.status(500).json({ error: 'user_invalid_email' })
   }
 
-  if (
-    typeof username !== 'string' ||
-    !validator.isLength(username, { min: 4, max: 10 })
-  ) {
+  if (typeof username !== 'string' || !validator.isLength(username, { min: 4, max: 10 })) {
     return res.status(500).json({ error: 'user_invalid_username' })
   }
 
-  if (
-    typeof password !== 'string' ||
-    !validator.isLength(password, { min: 4, max: 10 })
-  ) {
+  if (typeof password !== 'string' || !validator.isLength(password, { min: 4, max: 10 })) {
     return res.status(500).json({ error: 'user_invalid_password' })
   }
 
-  const [usernameCheck] = await knex('MEMB_INFO')
-    .count('* as total')
-    .where({ memb___id: username })
+  const [usernameCheck] = await knex('MEMB_INFO').count('* as total').where({ memb___id: username })
 
   if (usernameCheck.total !== 0) {
     return res.status(500).json({ error: 'user_username_exists' })
   }
 
-  const [emailCheck] = await knex('MEMB_INFO')
-    .count('* as total')
-    .where({ mail_addr: email })
+  const [emailCheck] = await knex('MEMB_INFO').count('* as total').where({ mail_addr: email })
 
   if (emailCheck.total !== 0) {
     return res.status(500).json({ error: 'user_email_exists' })
@@ -55,11 +44,11 @@ user.post('/', async (req, res) => {
       password,
       email,
       date: new Date(),
-    }
+    },
   )
 
   res.json({
     username,
     email,
   })
-})
+}

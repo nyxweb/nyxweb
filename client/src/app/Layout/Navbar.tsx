@@ -1,25 +1,34 @@
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { ROUTES } from '../Routes'
+interface MenuProps {
+  path: string
+  label: string
+}
 
 export const Navbar = () => {
+  const isPageActive = (path: string) =>
+    path === window.location.pathname || (window.location.pathname.startsWith(path) && path !== '/')
+      ? 'active'
+      : undefined
+
+  const MenuLink: React.FC<MenuProps> = ({ path, label }) => (
+    <Link to={path} className={isPageActive(path)}>
+      <span>{label}</span>
+      <div className='underline'>
+        <div className='line' />
+      </div>
+    </Link>
+  )
+
   return (
     <Wrapper>
       <Container>
-        {ROUTES.map(({ path, label }, key) => {
-          const pageActive =
-            path === '/' ? window.location.pathname === path : window.location.pathname.startsWith(path)
-
-          return (
-            <Link key={key} to={path} className={pageActive ? 'active' : undefined}>
-              {label}
-              <div className='underline'>
-                <div className='line' />
-              </div>
-            </Link>
-          )
-        })}
+        <MenuLink path='/' label='News' />
+        <MenuLink path='/create-account' label='Create Account' />
+        <MenuLink path='/download-game' label='Download Game' />
+        <MenuLink path='/rankings' label='Rankings' />
+        <MenuLink path='/server-info' label='Server Information' />
       </Container>
     </Wrapper>
   )

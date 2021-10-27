@@ -7,13 +7,13 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "noImplicitAny": true,
     "strictNullChecks": true,
     "alwaysStrict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "useUnknownInCatchVariables": false,
     "skipLibCheck": true,
-    "rootDir": "./src",
-    "outDir": "./build"
+    "outDir": "./build",
+    "baseUrl": "./src"
   }
 }

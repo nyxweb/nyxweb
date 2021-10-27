@@ -1,6 +1,7 @@
-import { Link, Route, Switch } from 'react-router-dom'
+import { Link, Switch } from 'react-router-dom'
 import styled from 'styled-components'
 
+import { PrivateRoute } from 'app/routes/PrivateRoute'
 import { MainContentBlock } from 'app/components'
 import { Reset } from './Reset'
 import { StatsAdder } from './StatsAdder'
@@ -8,15 +9,6 @@ import { StatsAdder } from './StatsAdder'
 export const Character = () => {
   return (
     <Wrapper>
-      <MainContentBlock padding={0}>
-        <UserSubMenu>
-          <SubLink to='/character/reset'>Reset Character</SubLink>
-          <SubLink to='/character/stats'>Stats Adder</SubLink>
-          <SubLink to='/character/clear'>Clear PK</SubLink>
-          <SubLink to='/character/name'>Change Name</SubLink>
-          <SubLink to='/character/class'>Change Class</SubLink>
-        </UserSubMenu>
-      </MainContentBlock>
       <MainContentBlock>
         <table>
           <thead>
@@ -78,9 +70,19 @@ export const Character = () => {
         </table>
       </MainContentBlock>
 
+      <MainContentBlock padding={0}>
+        <UserSubMenu>
+          <SubLink to='/character/reset'>Reset Character</SubLink>
+          <SubLink to='/character/stats'>Stats Adder</SubLink>
+          <SubLink to='/character/clear'>Clear PK</SubLink>
+          <SubLink to='/character/name'>Change Name</SubLink>
+          <SubLink to='/character/class'>Change Class</SubLink>
+        </UserSubMenu>
+      </MainContentBlock>
+
       <Switch>
-        <Route path='/character/reset' component={Reset} />
-        <Route path='/character/stats' component={StatsAdder} />
+        <PrivateRoute path='/character/reset' component={Reset} />
+        <PrivateRoute path='/character/stats' component={StatsAdder} />
         {/* <Route path='/character/clear' component={ClearPK} />
         <Route path='/character/name' component={ChangeName} />
         <Route path='/character/class' component={ChangeClass} /> */}

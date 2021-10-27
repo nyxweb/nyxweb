@@ -1,9 +1,7 @@
-import { Router } from 'express'
-import { knex } from '../db'
+import { RequestHandler } from 'express'
+import { knex } from 'db'
 
-export const guild = Router()
-
-guild.get('/:name', async (req, res) => {
+export const getGuild: RequestHandler = async (req, res) => {
   const name = req.params.name
 
   if (name.length > 10) {
@@ -27,7 +25,7 @@ guild.get('/:name', async (req, res) => {
     FROM Guild
     WHERE G_Name = :name
   `,
-    { name }
+    { name },
   )
 
   if (!guild) {
@@ -35,9 +33,9 @@ guild.get('/:name', async (req, res) => {
   }
 
   res.json({ ...guild, mark: guild.mark.toString('hex') })
-})
+}
 
-guild.get('/', async (req, res) => {
+export const getGuilds: RequestHandler = async (req, res) => {
   const { top = 50 } = req.query
 
   const guilds = await knex.raw(
@@ -58,8 +56,8 @@ guild.get('/', async (req, res) => {
     FROM Character
     ORDER BY Resets DESC, cLevel DESC, Name ASC
   `,
-    [Number(top)]
+    [Number(top)],
   )
 
   res.json(guilds)
-})
+}

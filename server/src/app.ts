@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 import 'dotenv/config'
 import './db'
 import { router } from './routes'
+import { errorHandler } from 'utils'
 
 const PORT = process.env.PORT
 const app = express()
@@ -21,6 +22,7 @@ app.use(
   }),
 )
 app.use('/api', router)
+app.use(errorHandler)
 
 app.listen(PORT, () => {
   console.log(`Application running on port ${PORT}`)

@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css'
 
 import { GlobalStyle } from '../styles/globals'
 import { Layout } from './Layout'
-import { Routes } from './Routes'
+import { Routes } from './routes'
 import { Loader } from './components'
 import { useAppDispatch, useAppSelector } from 'store'
 import { userVerify } from 'store/user'

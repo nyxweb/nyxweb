@@ -1,9 +1,7 @@
-import { Router } from 'express'
-import { knex } from '../db'
+import { RequestHandler } from 'express'
+import { knex } from 'db'
 
-export const character = Router()
-
-character.get('/:name', async (req, res) => {
+export const getCharacter: RequestHandler = async (req, res) => {
   const { name } = req.params
 
   if (!name?.length || name.length > 10) {
@@ -20,7 +18,7 @@ character.get('/:name', async (req, res) => {
     FROM Character
     WHERE Name = :name
   `,
-    { name }
+    { name },
   )
 
   if (!character) {
@@ -28,9 +26,9 @@ character.get('/:name', async (req, res) => {
   }
 
   res.json({ ...character, inventory: character.inventory.toString('hex') })
-})
+}
 
-character.get('/', async (req, res) => {
+export const getCharacters: RequestHandler = async (req, res) => {
   const { top = 50 } = req.query
 
   const characters = await knex.raw(
@@ -43,8 +41,8 @@ character.get('/', async (req, res) => {
     FROM Character
     ORDER BY Resets DESC, cLevel DESC, Name ASC
   `,
-    [Number(top)]
+    [Number(top)],
   )
 
   res.json(characters)
-})
+}

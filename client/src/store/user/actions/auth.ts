@@ -5,7 +5,7 @@ import { User, UserLoginInput } from '../typings'
 
 export const userLogin = createAsyncThunk('user/login', async ({ username, password }: UserLoginInput) => {
   const { data } = await toast.promise(
-    axios.post<{ token: string; user: User }>('/auth', {
+    axios.post<User>('/auth', {
       username,
       password,
     }),
@@ -22,11 +22,14 @@ export const userLogin = createAsyncThunk('user/login', async ({ username, passw
     },
   )
 
-  axios.defaults.headers.common.authorization = `Bearer ${data.token}`
   return data
 })
 
 export const userVerify = createAsyncThunk('user/verify', async () => {
   const { data } = await axios.get<User>('/auth')
   return data
+})
+
+export const userLogout = createAsyncThunk('user/logout', async () => {
+  await axios.delete('/auth')
 })
