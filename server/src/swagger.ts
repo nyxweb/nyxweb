@@ -1,14 +1,12 @@
 import express from 'express'
-import yaml from 'js-yaml'
+import YAML from 'yamljs'
 import swaggerUI from 'swagger-ui-express'
-import { readFileSync } from 'fs'
-import { join } from 'path'
+import path from 'path'
 
-export const schema = yaml.load(readFileSync(join(__dirname, '../openapi.yaml'), 'utf8')) as swaggerUI.JsonObject
-
+const swaggerDocument = YAML.load(path.join(__dirname, '../openapi.yaml'))
 const app = express()
 
-app.use('/', swaggerUI.serve, swaggerUI.setup(schema))
+app.use('/', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 
 app.listen(5001, () => {
   console.log(`Swagger App running at http://localhost:5001`)

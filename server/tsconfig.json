@@ -12,6 +12,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "useUnknownInCatchVariables": false,
+    "downlevelIteration": true,
     "skipLibCheck": true,
     "outDir": "./build",
     "baseUrl": "./src"

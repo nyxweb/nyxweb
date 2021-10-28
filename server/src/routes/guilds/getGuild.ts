@@ -1,15 +1,16 @@
 import { RequestHandler } from 'express'
 import { knex } from 'db'
 
-export const getGuild: RequestHandler = async (req, res) => {
-  const name = req.params.name
+export const getGuild: RequestHandler = async (req, res, next) => {
+  try {
+    const name = req.params.name
 
-  if (name.length > 10) {
-    return res.status(404).json({ error: 'Guild not found' })
-  }
+    if (name.length > 10) {
+      return res.status(404).json({ error: 'Guild not found' })
+    }
 
-  const [guild] = await knex.raw(
-    `SELECT
+    const [guild] = await knex.raw(
+      `SELECT
       G_Name as name,
       G_Mark as mark,
       (
@@ -25,21 +26,25 @@ export const getGuild: RequestHandler = async (req, res) => {
     FROM Guild
     WHERE G_Name = :name
   `,
-    { name },
-  )
+      { name },
+    )
 
-  if (!guild) {
-    return res.status(404).json({ error: 'Guild not found' })
+    if (!guild) {
+      return res.status(404).json({ error: 'Guild not found' })
+    }
+
+    res.json({ ...guild, mark: guild.mark.toString('hex') })
+  } catch (error) {
+    next(error)
   }
-
-  res.json({ ...guild, mark: guild.mark.toString('hex') })
 }
 
-export const getGuilds: RequestHandler = async (req, res) => {
-  const { top = 50 } = req.query
+export const getGuilds: RequestHandler = async (req, res, next) => {
+  try {
+    const { top = 50 } = req.query
 
-  const guilds = await knex.raw(
-    `
+    const guilds = await knex.raw(
+      `
     SELECT TOP ??
       G_Name as name,
       G_Mark as mark,
@@ -56,8 +61,11 @@ export const getGuilds: RequestHandler = async (req, res) => {
     FROM Character
     ORDER BY Resets DESC, cLevel DESC, Name ASC
   `,
-    [Number(top)],
-  )
+      [Number(top)],
+    )
 
-  res.json(guilds)
+    res.json(guilds)
+  } catch (error) {
+    next(error)
+  }
 }

@@ -1,0 +1,91 @@
+2021-10-27 21:33:44: Unhandled error: test
+2021-10-27 23:55:07: test
+2021-10-27 23:55:24: test
+2021-10-27 23:55:24: Application started on port 5000
+2021-10-27 23:55:24: Socket EmjTlprI4hTzXUohAAAA connected.
+2021-10-27 23:55:29: Socket p64ANEgD6eISUMiuAAAB connected.
+2021-10-27 23:55:29: MSG: wtf message :]
+2021-10-27 23:55:32: Socket 7xZWVRbkmWDeOeGiAAAC connected.
+2021-10-27 23:55:32: MSG: wtf message :]
+2021-10-27 23:59:54: Socket cAJV_G8ghZ-L_FfQAAAD connected.
+2021-10-27 23:59:54: MSG: wtf message :]
+2021-10-27 23:59:56: Socket I1OF86m5mhv0H7T7AAAE connected.
+2021-10-27 23:59:56: MSG: wtf message :]
+2021-10-28 00:02:31: test
+2021-10-28 00:02:31: Application started on port 5000
+2021-10-28 00:02:31: Socket QIOOPJ27bgs5gKKiAAAA connected.
+2021-10-28 00:02:35: Socket l0zaEPNzJuDegSIOAAAB connected.
+2021-10-28 00:02:35: MSG: wtf message :]
+2021-10-28 00:03:39: test
+2021-10-28 00:03:39: Application started on port 5000
+2021-10-28 00:03:39: Socket oEHF1ByTFoWkhVZZAAAA connected.
+2021-10-28 00:03:41: Socket V0pqgjxgaFLGsYkcAAAB connected.
+2021-10-28 00:03:41: MSG: wtf message :]
+2021-10-28 00:03:59: test
+2021-10-28 00:03:59: Application started on port 5000
+2021-10-28 00:03:59: Socket ncwvi9r3sidBs8UGAAAA connected.
+2021-10-28 00:04:00: Socket qjoYbuzE8CaJGSYCAAAB connected.
+2021-10-28 00:04:11: test
+2021-10-28 00:04:11: Application started on port 5000
+2021-10-28 00:04:11: Socket SoDescAjbQyBiW9QAAAA connected.
+2021-10-28 00:04:12: Socket 1OJupPHT6jQY1Kh2AAAB connected.
+2021-10-28 00:04:12: MSG: wtf message :]
+2021-10-28 00:04:19: test
+2021-10-28 00:04:19: Application started on port 5000
+2021-10-28 00:04:19: Socket S04JPidsDno7kvIeAAAA connected.
+2021-10-28 00:04:20: Socket _IURQmDa8rcyHET4AAAB connected.
+2021-10-28 00:04:20: MSG: wtf message :]
+2021-10-28 00:07:04: test
+2021-10-28 00:07:04: Application started on port 5000
+2021-10-28 00:07:04: Socket 7Jb3ESJt_-qfQm-rAAAA connected.
+2021-10-28 00:07:49: test 39220f2c-8577-4bb6-a1b0-d5538a454b9d
+2021-10-28 00:07:49: Application started on port 5000
+2021-10-28 00:07:49: Socket i0fsxUiUJ_oA9ee4AAAA connected.
+2021-10-28 00:17:59: test 321044d8-6524-4855-ba8e-199cd606adc2
+2021-10-28 00:17:59: Application started on port 5000
+2021-10-28 00:17:59: Socket U-e_QEd34YWa3kl0AAAA connected.
+2021-10-28 00:18:08: Application started on port 5000
+2021-10-28 00:18:08: Socket G5OM0hWA2npd6eq8AAAB connected.
+2021-10-28 00:18:47: Application started on port 5000
+2021-10-28 00:18:47: Socket sfnoKA6SFRZq6ErtAAAB connected.
+2021-10-28 00:18:50: Socket 4hF76DMWta8fHNGtAAAD connected.
+2021-10-28 00:18:50: MSG: wtf message :]
+2021-10-28 00:20:01: Application started on port 5000
+2021-10-28 00:20:01: Socket rmF1OkqlLpvsU8YYAAAB connected.
+2021-10-28 00:20:03: Socket GcPujHay8NJTiS_tAAAD connected.
+2021-10-28 00:20:04: [ GcPujHay8NJTiS_tAAAD ] test: wtf message :]
+2021-10-28 00:20:18: Socket FLsZ_DSfR-26or_CAAAF connected.
+2021-10-28 00:21:26: Application started on port 5000
+2021-10-28 00:21:26: Socket V1AprynB7Jq1NVWnAAAB connected.
+2021-10-28 00:21:31: Socket sX9rHBSPRVLYJY1RAAAD connected.
+2021-10-28 00:21:31: [ sX9rHBSPRVLYJY1RAAAD ] Unauthorized to send message: wtf message :]
+2021-10-28 00:21:48: Socket AmKtGsHTmYWKRPMFAAAF connected.
+2021-10-28 00:21:48: [ AmKtGsHTmYWKRPMFAAAF ] test: wtf message :]
+2021-10-28 00:21:51: Socket 0VifydoHP25uuaTJAAAH connected.
+2021-10-28 00:21:51: [ 0VifydoHP25uuaTJAAAH ] test: wtf message :]
+2021-10-28 00:35:57: Application started on port 5000
+2021-10-28 00:35:57: Socket a8lCbs-LXGENePnKAAAB connected.
+2021-10-28 00:42:57: Application started on port 5000
+2021-10-28 00:42:58: Socket tl3LImcrbYfYqxSqAAAB connected. IP: ::ffff:127.0.0.1
+2021-10-28 00:44:10: Application started on port 5000
+2021-10-28 00:44:10: Socket QiD5WoAGIjyKNrG7AAAB connected. IP: ::1
+2021-10-28 00:46:11: Application started on port 5000
+2021-10-28 00:46:11: Socket IMZHXFs1Pg721xTlAAAB connected. IP: ::1
+2021-10-28 00:47:34: Application started on port 5000
+2021-10-28 00:47:34: Socket k3qHvQS1i1hm5aVIAAAB connected. IP: ::ffff:127.0.0.1
+2021-10-28 00:49:35: Application started on port 5000
+2021-10-28 00:49:35: Socket IDNqr1LcV9hNXaP0AAAB connected. IP: ::ffff:127.0.0.1
+2021-10-28 00:52:58: Application started on port 5000
+2021-10-28 00:52:58: Socket 41s-0P5rqluLRrpkAAAB connected. IP: ::1
+2021-10-28 00:53:08: Application started on port 5000
+2021-10-28 00:53:08: Socket K2ANX6PXgPrgy9hQAAAB connected. IP: ::1
+2021-10-28 00:53:14: Socket Sje1eukGhV8gIzRBAAAD connected. IP: ::1
+2021-10-28 00:53:14: [ Sje1eukGhV8gIzRBAAAD ] test: wtf message :]
+2021-10-28 00:54:59: Application started on port 5000
+2021-10-28 00:55:00: Socket KaX_E03crQCYb-VZAAAB connected. IP: ::1
+2021-10-28 00:55:25: Application started on port 5000
+2021-10-28 00:55:25: Socket 8hB26eH9PuWYPromAAAB connected. IP: ::1
+2021-10-28 00:55:49: Application started on port 5000
+2021-10-28 00:55:49: Socket noD0IRDmXIBOzy7fAAAB connected. IP: ::1
+2021-10-28 00:56:15: Application started on port 5000
+2021-10-28 00:56:15: Socket jNTvD7ki_cfE-wqYAAAB connected. IP: ::1
