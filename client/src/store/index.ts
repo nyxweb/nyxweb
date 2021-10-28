@@ -1,9 +1,11 @@
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit'
 import userSlice from './user'
+import socketSlice from './socket'
 
 export const store = configureStore({
   reducer: {
     user: userSlice,
+    socket: socketSlice,
   },
 })
 
