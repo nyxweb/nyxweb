@@ -1,4 +1,10 @@
 {
+  "name": "nyxweb_backend_v3",
+  "description": "NyxWeb Backend",
+  "author": "Dea7h",
+  "version": "3.0.0",
+  "license": "MIT",
+  "private": true,
   "main": "./dist/app.js",
   "scripts": {
     "dev": "nodemon -r tsconfig-paths/register ./src/app.ts",

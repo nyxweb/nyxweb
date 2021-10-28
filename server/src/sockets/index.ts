@@ -1,24 +1,18 @@
-import { Server, Socket } from 'socket.io'
-import { parse } from 'cookie'
-import jwt from 'jsonwebtoken'
-
+import { Socket } from 'socket.io'
 import { logger } from 'tools'
 
-export const wsAuthMiddleware = (socket: Socket, next: () => void) => {
-  try {
-    const cookies = parse(socket.handshake.headers.cookie!)
-    const payload = jwt.verify(cookies.nyx_auth, process.env.JWT_SECRET!)
-    socket.data.user = payload
-  } catch (error) {}
+export const wsAttachListeners = (socket: Socket) => {
+  logger.debug(`Socket connected.`, { id: socket.id, ip: socket.request.socket.remoteAddress })
 
-  next()
-}
-
-export const wsListeners = (_io: Server, socket: Socket) => {
-  logger.info(`Socket ${socket.id} connected. IP: ${socket.request.socket.remoteAddress}`)
-
-  socket.on('test line', (message) => {
-    if (!socket.data.user) return logger.error(`[ ${socket.id} ] Unauthorized to send message: ${message}`)
-    logger.info(`[ ${socket.id} ] ${socket.data.user.username}: ${message}`)
+  socket.on('disconnect', () => {
+    logger.debug(`Socket disconnected`, { id: socket.id, ip: socket.request.socket.remoteAddress })
   })
+
+  // socket.on('test line', (message) => {
+  //   //socket.data.user.username
+  //   logger.info(`[ ${socket.id} ] says: ${message}`)
+  // })
 }
+
+export * from './tools'
+export * from './middleware'
