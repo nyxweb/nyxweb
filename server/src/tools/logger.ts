@@ -1,23 +1,31 @@
 import { createLogger, format, transports } from 'winston'
 
 export const logger = createLogger({
-  format: format.combine(
-    format.timestamp({
-      format: 'YYYY-MM-DD HH:mm:ss',
+  transports: [
+    new transports.Console({
+      format: format.combine(
+        format.colorize(),
+        format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+        format.printf((data) => {
+          const { timestamp, level, message, ...rest } = data
+          return `${timestamp} [${level}]: ${message} ${JSON.stringify(rest)}`
+        }),
+      ),
     }),
-    format.printf((data) => `${data.timestamp}: ${data.message}`),
-  ),
-  transports: [new transports.File({ filename: 'logs/errors.log' })],
+    new transports.File({
+      filename: 'logs/errors.log',
+      level: 'error',
+      format: format.combine(format.timestamp(), format.prettyPrint()),
+    }),
+    new transports.File({
+      filename: 'logs/combined.log',
+      format: format.combine(format.timestamp(), format.prettyPrint()),
+    }),
+  ],
+  exceptionHandlers: [
+    new transports.Console(),
+    new transports.File({
+      filename: 'logs/exceptions.log',
+    }),
+  ],
 })
-
-// if (process.env.NODE_ENV !== 'production') {
-logger.add(
-  new transports.Console({
-    format: format.combine(
-      format.colorize(),
-      format.simple(),
-      format.printf((data) => `${data.timestamp} [${data.level}]: ${data.message}`),
-    ),
-  }),
-)
-// }
