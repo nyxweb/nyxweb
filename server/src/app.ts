@@ -10,7 +10,7 @@ import rateLimit from 'express-rate-limit'
 import cookieParser from 'cookie-parser'
 
 import { router } from 'routes'
-import { wsListeners, wsAuthMiddleware } from 'sockets'
+import { wsAttachListeners, wsAuthMiddleware, wsMultiConnectionMiddleware } from 'sockets'
 import { errorHandler, logger } from 'tools'
 
 const PORT = process.env.PORT
@@ -29,8 +29,9 @@ app.get('/api/health', (_req, res) => res.end('ok'))
 app.use('/api', router)
 app.use(errorHandler)
 
+io.use(wsMultiConnectionMiddleware)
 io.use(wsAuthMiddleware)
-io.on('connection', (socket) => wsListeners(io, socket))
+io.on('connection', wsAttachListeners)
 
 server.listen(PORT, () => {
   logger.info(`Application started on port ${PORT}`)
