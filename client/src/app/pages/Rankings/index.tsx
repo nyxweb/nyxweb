@@ -1,15 +1,11 @@
-import { Link, Switch } from 'react-router-dom'
-import styled from 'styled-components'
-
-import { PrivateRoute } from 'app/routes/PrivateRoute'
 import { MainContentBlock } from 'app/components'
-import { Reset } from './Reset'
-import { StatsAdder } from './StatsAdder'
+import { HOF } from './HOF'
 
-export const Character = () => {
+export const Rankings = () => {
   return (
-    <Wrapper>
-      <MainContentBlock padding={0}>
+    <div>
+      <HOF />
+      <MainContentBlock>
         <table>
           <thead>
             <tr>
@@ -69,43 +65,6 @@ export const Character = () => {
           </tbody>
         </table>
       </MainContentBlock>
-
-      <MainContentBlock padding={0}>
-        <UserSubMenu>
-          <SubLink to='/character/reset'>Reset Character</SubLink>
-          <SubLink to='/character/stats'>Stats Adder</SubLink>
-          <SubLink to='/character/clear'>Clear PK</SubLink>
-          <SubLink to='/character/name'>Change Name</SubLink>
-          <SubLink to='/character/class'>Change Class</SubLink>
-        </UserSubMenu>
-      </MainContentBlock>
-
-      <Switch>
-        <PrivateRoute path='/character/reset' component={Reset} />
-        <PrivateRoute path='/character/stats' component={StatsAdder} />
-        {/* <Route path='/character/clear' component={ClearPK} />
-        <Route path='/character/name' component={ChangeName} />
-        <Route path='/character/class' component={ChangeClass} /> */}
-      </Switch>
-    </Wrapper>
+    </div>
   )
 }
-
-const Wrapper = styled.div`
-  .reset {
-    color: red;
-    margin-left: 3px;
-  }
-`
-
-const UserSubMenu = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  padding: 15px 0;
-`
-
-const SubLink = styled(Link)`
-  padding: 10px 15px;
-  background-color: rgba(0, 0, 0, 0.1);
-`

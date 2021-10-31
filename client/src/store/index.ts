@@ -1,11 +1,13 @@
 import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit'
 import userSlice from './user'
 import socketSlice from './socket'
+import rankingSlice from './ranking'
 
 export const store = configureStore({
   reducer: {
     user: userSlice,
     socket: socketSlice,
+    ranking: rankingSlice,
   },
 })
 

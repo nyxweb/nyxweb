@@ -33,5 +33,9 @@ const Form = styled.div`
   margin-bottom: 15px;
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: center;
+
+  & > * {
+    margin: 0 5px;
+  }
 `

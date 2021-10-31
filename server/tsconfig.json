@@ -16,5 +16,9 @@
     "skipLibCheck": true,
     "outDir": "./build",
     "baseUrl": "./src"
+  },
+  "include": ["./src/**/*"],
+  "ts-node": {
+    "files": true
   }
 }

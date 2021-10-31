@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { UserState } from './typings'
 import { userLogin, userLogout, userVerify } from './actions/auth'
+import { SocketIO } from '../socket'
 
 const initialState: UserState = {
   user: null,
@@ -23,6 +24,8 @@ export const userSlice = createSlice({
         state.loginStatus = 'succeeded'
         state.user = payload
         state.authorized = true
+        SocketIO.disconnect()
+        SocketIO.connect()
       })
 
       .addCase(userVerify.pending, (state) => {

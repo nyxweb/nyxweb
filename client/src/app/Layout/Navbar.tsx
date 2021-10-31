@@ -14,7 +14,7 @@ export const Navbar = () => {
 
   const MenuLink: React.FC<MenuProps> = ({ path, label }) => (
     <Link to={path} className={isPageActive(path)}>
-      <span>{label}</span>
+      {label}
       <div className='underline'>
         <div className='line' />
       </div>

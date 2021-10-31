@@ -1,12 +1,12 @@
 # NyxWeb v3
 
 ```
-MuOnline Website
-
-- Frontend stack
+- Frontend
   - ReactJS
   - Redux
 
 - Backend
   - ExpressJS
+  - Socket IO
+  - JSON Web Token
 ```
