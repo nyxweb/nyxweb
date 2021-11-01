@@ -1,13 +1,13 @@
+import { useRef } from 'react'
 import styled from 'styled-components'
 
-interface Props {
-  active: boolean
-}
+export const Modal = () => {
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const active = true
 
-export const Modal: React.FC<Props> = ({ children, active }) => {
   return (
-    <Wrapper className={active ? 'active' : 'inactive'}>
-      <Content>{children}</Content>
+    <Wrapper className={active ? 'active' : 'inactive'} ref={wrapperRef} onClick={() => console.log('test')}>
+      <Content>stuff here</Content>
     </Wrapper>
   )
 }
@@ -18,7 +18,7 @@ const Wrapper = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;

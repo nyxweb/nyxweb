@@ -4,10 +4,10 @@ import axios from 'axios'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
-import { GlobalStyle } from '../styles/globals'
-import { Layout } from './Layout'
-import { Routes } from './routes'
-import { Loader } from './components'
+import { GlobalStyle } from 'styles/globals'
+import { Layout } from 'app/Layout'
+import { Routes } from 'app/routes'
+import { Loader, Modal } from 'app/components'
 import { useAppDispatch, useAppSelector } from 'store'
 import { userVerify } from 'store/user'
 import { socketTest } from 'store/socket'
@@ -36,6 +36,7 @@ export const App = () => {
         <Loader active={authorized === 'loading'} />
       </Router>
       <ToastContainer autoClose={5000} closeButton={false} theme='dark' />
+      <Modal />
     </>
   )
 }

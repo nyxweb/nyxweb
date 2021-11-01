@@ -1,5 +1,5 @@
 export interface HOFCharacter {
-  name: number
+  name: string
   reset: number
   level: number
   class: number

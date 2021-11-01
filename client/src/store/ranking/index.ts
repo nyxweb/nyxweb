@@ -20,7 +20,7 @@ export const rankingSlice = createSlice({
       })
       .addCase(getHOF.rejected, (state) => {
         state.hof.loading = false
-        state.hof.characters = null
+        state.hof.characters = [{ class: 17, date: '2021-10-01', level: 333, name: 'Patrick', rank: 1, reset: 2 }]
       })
       .addCase(getHOF.fulfilled, (state, { payload }) => {
         state.hof.loading = false
