@@ -1,10 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { RankingState } from './typings'
-import { getHOF } from './actions'
+import { getCharacter, getHOF } from './actions'
 
 const initialState: RankingState = {
   hof: {
     characters: null,
+    loading: true,
+  },
+  character: {
+    data: null,
     loading: true,
   },
 }
@@ -25,6 +29,18 @@ export const rankingSlice = createSlice({
       .addCase(getHOF.fulfilled, (state, { payload }) => {
         state.hof.loading = false
         state.hof.characters = payload
+      })
+
+      .addCase(getCharacter.pending, (state) => {
+        state.character.loading = true
+      })
+      .addCase(getCharacter.fulfilled, (state, { payload }) => {
+        state.character.data = payload
+        state.character.loading = false
+      })
+      .addCase(getCharacter.rejected, (state) => {
+        state.character.data = null
+        state.character.loading = false
       })
   },
 })

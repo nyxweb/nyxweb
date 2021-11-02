@@ -36,6 +36,8 @@ export const getOne: RequestHandler = async (req, res, next) => {
       { name },
     )
 
+    console.log(character)
+
     if (!character) return res.status(404).json({ error: 'Character not found' })
 
     const guild = await knex('Guild')

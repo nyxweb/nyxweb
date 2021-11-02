@@ -1,21 +1,22 @@
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import Loader from 'react-loader-spinner'
 
 import { getClassInfo } from 'utils'
-import { MainContentBlock } from 'app/components'
+import { MainContentBlock, Modal, ReactLoader } from 'app/components'
 import { HOFCharacter, getHOF } from 'store/ranking'
 import { useAppDispatch, useAppSelector } from 'store'
+import { ModalCharacter } from 'app/components'
 
 interface Props {
   char: HOFCharacter
+  onClick: () => void
 }
 
-const CharacterCard: React.FC<Props> = ({ char }) => {
+const CharacterCard: React.FC<Props> = ({ char, onClick }) => {
   const classInfo = getClassInfo(char.class)
 
   return (
-    <CharacterCardWrapper>
+    <CharacterCardWrapper onClick={onClick}>
       <DetailsWrapper bg={classInfo.classImage.long}>
         <Detail>{char.name}</Detail>
         <Detail>{char.date.substr(0, 10)}</Detail>
@@ -28,10 +29,15 @@ const CharacterCard: React.FC<Props> = ({ char }) => {
 export const HOF = () => {
   const dispatch = useAppDispatch()
   const hof = useAppSelector((state) => state.ranking.hof)
+  const [modal, setModal] = useState<{ active: boolean; name?: string }>({ active: false })
 
   useEffect(() => {
     dispatch(getHOF())
   }, [dispatch])
+
+  const handleClick = (char: HOFCharacter) => {
+    setModal({ active: true, name: char.name })
+  }
 
   if (!hof.loading && !hof.characters) return null
 
@@ -39,11 +45,14 @@ export const HOF = () => {
     <MainContentBlock padding={0}>
       <CharacterSelectWrapper>
         {hof.loading ? (
-          <Loader type='Triangle' height={40} color='lightblue' />
+          <ReactLoader />
         ) : (
-          hof.characters?.map((char, key) => <CharacterCard key={key} char={char} />)
+          hof.characters?.map((char, key) => <CharacterCard key={key} char={char} onClick={() => handleClick(char)} />)
         )}
       </CharacterSelectWrapper>
+      <Modal active={modal.active} closeModal={() => setModal({ active: false })}>
+        <ModalCharacter name={modal.name} />
+      </Modal>
     </MainContentBlock>
   )
 }
@@ -60,6 +69,7 @@ const CharacterCardWrapper = styled.div`
   width: calc(565px / 5);
   height: 200px;
   margin-right: 10px;
+  transition: 400ms;
 
   &:hover {
     transform: translate(2px, 2px);
@@ -120,7 +130,7 @@ const DetailsWrapper = styled.div<{ bg: string }>`
     top: -40%;
     left: 100%;
     transition-property: left, top, opacity;
-    transition-duration: 0.7s, 0.7s, 0.15s;
+    transition-duration: 0.4s, 0.4s, 0.15s;
     transition-timing-function: ease;
   }
 `

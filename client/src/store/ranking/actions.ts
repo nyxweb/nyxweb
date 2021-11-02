@@ -8,6 +8,6 @@ export const getHOF = createAsyncThunk('ranking/hof', async () => {
 })
 
 export const getCharacter = createAsyncThunk('ranking/character', async ({ name }: { name: string }) => {
-  const { data } = await axios.get<Character[]>(`/characters/${name}`)
+  const { data } = await axios.get<Character>(`/characters/${name}`)
   return data
 })

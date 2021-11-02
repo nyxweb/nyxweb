@@ -1,13 +1,22 @@
 import { useRef } from 'react'
 import styled from 'styled-components'
 
-export const Modal = () => {
-  const wrapperRef = useRef<HTMLDivElement>(null)
-  const active = true
+interface Props {
+  active: boolean
+  closeModal: () => void
+}
+
+export const Modal: React.FC<Props> = ({ active, closeModal, children }) => {
+  const contentRef = useRef<HTMLDivElement>(null)
+
+  const handleClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (contentRef.current?.contains(e.target as any)) return
+    closeModal()
+  }
 
   return (
-    <Wrapper className={active ? 'active' : 'inactive'} ref={wrapperRef} onClick={() => console.log('test')}>
-      <Content>stuff here</Content>
+    <Wrapper className={active ? 'active' : 'inactive'} onClick={handleClick}>
+      <Content ref={contentRef}>{children}</Content>
     </Wrapper>
   )
 }

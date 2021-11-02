@@ -12,6 +12,10 @@ export interface RankingState {
     characters: HOFCharacter[] | null
     loading: boolean
   }
+  character: {
+    data: Character | null
+    loading: boolean
+  }
 }
 
 interface Guild {
