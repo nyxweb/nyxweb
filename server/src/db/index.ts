@@ -1,27 +1,29 @@
-import KNEX, { Knex } from 'knex'
 import { logger } from 'tools'
+import { createConnection } from 'typeorm'
+import 'reflect-metadata'
+import 'dotenv/config'
 
-export let knex: Knex
+import { MEMB_INFO, Character, Guild, GuildMember, nyx_resources, nyx_hof } from './entity'
 
-// @ts-ignore
-if (!knex) {
-  knex = KNEX({
-    client: 'mssql',
-    connection: {
-      server: process.env.DB_HOST,
+(async () => {
+  try {
+    await createConnection({
+      type: 'mssql',
+      host: process.env.DB_HOST,
       database: process.env.DB_NAME,
-      user: process.env.DB_USER,
+      username: process.env.DB_USER,
       password: process.env.DB_PASS,
       port: Number(process.env.DB_PORT),
-    },
-  })
+      synchronize: false,
+      logging: true,
+      extra: {
+        trustServerCertificate: true,
+      },
+      entities: [MEMB_INFO, Character, Guild, GuildMember, nyx_resources, nyx_hof],
+    })
 
-  knex
-    .raw(`SELECT 1`)
-    .then(() => {
-      logger.info(`Database connection successfully established on ${process.env.DB_HOST}:${process.env.DB_PORT}.`)
-    })
-    .catch((error) => {
-      logger.error(`Could not connect to the database`, { error: error.message })
-    })
-}
+    logger.info(`Database connection successfully established on ${process.env.DB_HOST}:${process.env.DB_PORT}.`)
+  } catch (error) {
+    logger.error(`Could not connect to the database`, { error: error.message })
+  }
+})()

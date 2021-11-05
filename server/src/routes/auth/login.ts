@@ -1,71 +1,51 @@
 import { RequestHandler } from 'express'
+import { getConnection, getRepository } from 'typeorm'
 import validator from 'validator'
 import jwt from 'jsonwebtoken'
 
-import { knex } from 'db'
-
-const resourceColumns = [
-  'storage',
-  'zen',
-  'credits',
-  'chaos',
-  'bless',
-  'soul',
-  'life',
-  'creation',
-  'rena',
-  'stone',
-  'boh',
-  'box1',
-  'box2',
-  'box3',
-  'box4',
-  'box5',
-  'heart',
-]
+import { MEMB_INFO, nyx_resources } from 'db/entity'
 
 export const login: RequestHandler = async (req, res, next) => {
   try {
-    const { username, password, remember } = req.body
+    const { username, password } = req.body
 
     if (typeof username !== 'string' || !validator.isLength(username, { min: 4, max: 10 })) {
-      return res.status(400).json({ error: 'Username must be between 4 and 10 characters.' })
+      return res.status(400).json({ error: 'Wrong Username or Password.' })
     }
 
     if (typeof password !== 'string' || !validator.isLength(password, { min: 4, max: 10 })) {
-      return res.status(400).json({ error: 'Password must be between 4 and 10 characters.' })
+      return res.status(400).json({ error: 'Wrong Username or Password.' })
     }
 
-    const user = await knex('MEMB_INFO as user')
-      .select([
-        'memb___id as username',
-        'mail_addr as email',
-        'appl_days as created_at',
-        'bloc_code',
-        'ctl1_code',
-        'IsVip as is_vip',
-        'VipExpirationTime as vip_expiration',
-        ...resourceColumns,
-      ])
-      .where({ memb___id: username, memb__pwd: password })
-      .leftJoin('nyx_resources as resources', 'user.memb___id', '=', 'resources.account')
-      .first()
+    const user = await getRepository(MEMB_INFO).findOne(
+      { memb___id: username, memb__pwd: password },
+      {
+        select: [
+          'memb___id',
+          'mail_addr',
+          'appl_days',
+          'bloc_code',
+          'ctl1_code',
+          'IsVip',
+          'VipExpirationTime',
+          'resources',
+        ],
+        relations: ['resources'],
+      },
+    )
 
     if (!user) return res.status(400).json({ error: 'Wrong Username or Password.' })
 
-    // Check and create missing user data
-    const resources = await knex('nyx_resources').count('* as count').where({ account: username }).first()
-    if (!resources?.count) {
-      await knex('nyx_resources').insert({ account: username, storage: '' })
-
-      resourceColumns.forEach((key) => {
-        user[key] = 0
-      })
-      user.storage = ''
+    if (!user.resources) {
+      const resources = new nyx_resources()
+      resources.account = user.memb___id
+      user.resources = resources
+      await getConnection().manager.save(resources)
     }
 
-    const expiresIn = (remember ? 90 : 1) * 24 * 60 * 60
-    const token = jwt.sign(user, process.env.JWT_SECRET!, {
+    const { resources, ...payload } = user
+    const expiresIn = 24 * 60 * 60
+    const token = jwt.sign(payload, process.env.JWT_SECRET!, {
       expiresIn,
     })
 

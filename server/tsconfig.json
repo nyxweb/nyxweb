@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "experimentalDecorators": true,
     "module": "commonjs",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strictPropertyInitialization": false,
     "removeComments": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,

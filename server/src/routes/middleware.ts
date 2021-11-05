@@ -2,29 +2,21 @@ import { Request, RequestHandler } from 'express'
 import { verify } from 'jsonwebtoken'
 import { parse } from 'cookie'
 
-import { knex } from 'db'
-import { User } from 'typings'
+import { getRepository } from 'typeorm'
+import { MEMB_INFO } from 'db/entity'
 
 export const auth: RequestHandler = async (req: Request, res, next) => {
   try {
     const { nyx_auth } = parse(req.cookies)
-
     const payload = verify(nyx_auth, process.env.JWT_SECRET!)
+    const userRepository = getRepository(MEMB_INFO)
 
     if (!payload) return res.status(401).json({ error: 'Not authorized' })
 
-    const user: User = await knex('MEMB_INFO')
-      .select(
-        'memb___id as username',
-        'mail_addr as email',
-        'appl_days as created_at',
-        'bloc_code',
-        'ctl1_code',
-        'IsVip as is_vip',
-        'VipExpirationTime as vip_expiration',
-      )
-      .where({ memb___id: payload.username, mail_addr: payload.email })
-      .first()
+    const user = await userRepository.findOne(
+      { memb___id: payload.memb___id, mail_addr: payload.mail_addr },
+      { select: ['memb___id', 'mail_addr', 'appl_days', 'bloc_code', 'ctl1_code', 'IsVip', 'VipExpirationTime'] },
+    )
 
     if (!user) return res.status(401).json({ error: 'Not authorized' })
 

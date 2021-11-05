@@ -2,8 +2,7 @@ import express from 'express'
 import { Server } from 'socket.io'
 import http from 'http'
 import ws from 'ws'
-import 'dotenv/config'
-import './db'
+import 'db'
 
 import cors from 'cors'
 import rateLimit from 'express-rate-limit'
@@ -25,7 +24,7 @@ app.use(express.json({ type: 'application/json', limit: '1kb' }))
 app.use(cookieParser())
 app.use(rateLimit({ windowMs: 1000, max: 10 }))
 
-app.get('/api/health', (_req, res) => res.end('ok'))
+app.get('/api/health', async (_req, res) => res.end('ok'))
 app.use('/api', router)
 app.use(errorHandler)
 

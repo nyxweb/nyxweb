@@ -17,10 +17,11 @@
     "express": "^4.17.1",
     "express-rate-limit": "^5.5.0",
     "jsonwebtoken": "^8.5.1",
-    "knex": "^0.95.11",
+    "mssql": "^7.2.1",
     "nodemon": "^2.0.14",
+    "reflect-metadata": "^0.1.13",
     "socket.io": "^4.3.1",
-    "tedious": "^14.0.0",
+    "typeorm": "^0.2.38",
     "validator": "^13.6.0",
     "winston": "^3.3.3",
     "ws": "^8.2.3"
