@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn } from 'typeorm'
+import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn, OneToOne } from 'typeorm'
+import { Character } from '.'
 import { Guild } from './Guild'
 
 @Entity('GuildMember')
@@ -18,4 +19,8 @@ export class GuildMember {
   @ManyToOne(() => Guild, (guild) => guild.members)
   @JoinColumn({ name: 'G_Name' })
   guild: Guild
+
+  @OneToOne(() => Character)
+  @JoinColumn({ name: 'Name' })
+  character: Character
 }

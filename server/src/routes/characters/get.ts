@@ -5,52 +5,68 @@ import { Character, nyx_hof } from 'db/entity'
 export const getOne: RequestHandler = async (req, res, next) => {
   try {
     const { name } = req.params
-    const charRepository = getRepository(Character)
 
     if (!name?.length || name.length > 10) return res.status(404).json({ error: 'Character not found' })
 
-    const character = await charRepository
-      .createQueryBuilder()
+    const character = await getRepository(Character)
+      .createQueryBuilder('char')
       .select([
-        'Name',
-        'cLevel',
-        'Resets',
-        'Strength + Dexterity + Vitality + Energy + Leadership + LevelUpPoint as total_stats',
-        'Inventory',
-        'Money',
-        'MapNumber',
-        'MapPosX',
-        'MapPosY',
-        'PkCount',
-        'CtlCode',
-        'ChatLimitTime',
-        'BanPost',
-        'IsMarried',
-        'MarryName',
-        'QuestInProgress',
-        'QuestNumber',
-        'QuestMonsters',
-        'SkyEventWins',
-        'IsVip',
-        'VipExpirationTime',
+        'char.Name',
+        'char.Resets',
+        'char.cLevel',
+        'char.Strength',
+        'char.Dexterity',
+        'char.Vitality',
+        'char.Energy',
+        'char.Leadership',
+        'char.LevelUpPoint',
+        'char.Inventory',
+        'char.Money',
+        'char.MapNumber',
+        'char.PkCount',
+        'char.CtlCode',
+        'char.ChatLimitTime',
+        'char.BanPost',
+        'char.IsMarried',
+        'char.MarryName',
+        'char.QuestInProgress',
+        'char.QuestNumber',
+        'char.QuestMonsters',
+        'char.SkyEventWins',
+        'char.IsVip',
+        'char.VipExpirationTime',
+        'member.G_Name',
+        'member.G_Status',
+        'guild.G_Mark',
+        'guild.G_Score',
+        'guild.G_Master',
+        'guild.G_Rival',
+        'guild.G_Union',
       ])
-      .where({ Name: name })
-      .getRawOne()
+      .leftJoin('char.member', 'member')
+      .leftJoin('member.guild', 'guild')
+      .where('char.Name = :name', { name })
+      .getOne()
 
     if (!character) return res.status(404).json({ error: 'Character not found' })
 
-    // const guild = await knex('Guild')
-    //   .select('G_Name as name', 'G_Mark as mark', 'G_Score as score', 'G_Rival as rival', 'G_Union as union')
-    //   .first()
+    const { Strength, Dexterity, Vitality, Energy, Leadership, LevelUpPoint, ...char } = character
 
-    // if (guild) {
-    //   const member = await knex('GuildMember').select('G_Status as position').where({ Name: name }).first()
-    //   guild.position = member.position
-    // }
+    if (char.member) {
+      char.member = {
+        ...char.member,
+        guild: {
+          ...char.member.guild,
+          G_Mark: char.member.guild.G_Mark.toString('hex') as any,
+        },
+      }
+    }
 
-    const Inventory = character.Inventory?.toString('hex').substr(0, 240)
-
-    res.json({ ...character, Inventory })
+    res.json({
+      ...char,
+      Inventory: char.Inventory?.toString('hex').substr(0, 240) ?? null,
+      total_stats: Strength + Dexterity + Vitality + Energy + Leadership + LevelUpPoint,
+    })
   } catch (error) {
     next(error)
   }
@@ -58,24 +74,69 @@ export const getOne: RequestHandler = async (req, res, next) => {
 
 export const getMany: RequestHandler = async (req, res, next) => {
   try {
-    let { top = 50 } = req.query
-    const charRepository = getRepository(Character)
+    const { top = 50 } = req.query
+    const limit = isNaN(Number(top)) || Number(top) > 100 || Number(top) < 1 ? 50 : Number(top)
 
-    if (isNaN(Number(top)) || Number(top) > 100) top = 50
-
-    const characters = await charRepository
-      .createQueryBuilder()
+    const characters = await getRepository(Character)
+      .createQueryBuilder('char')
       .select([
-        'Name',
-        'Resets',
-        'cLevel',
-        'Strength + Dexterity + Vitality + Energy + Leadership + LevelUpPoint as total_stats',
+        'char.Name',
+        'char.Resets',
+        'char.cLevel',
+        'char.Strength',
+        'char.Dexterity',
+        'char.Vitality',
+        'char.Energy',
+        'char.Leadership',
+        'char.LevelUpPoint',
+        'char.Inventory',
+        'char.Money',
+        'char.MapNumber',
+        'char.PkCount',
+        'char.CtlCode',
+        'char.ChatLimitTime',
+        'char.BanPost',
+        'char.IsMarried',
+        'char.MarryName',
+        'char.QuestInProgress',
+        'char.QuestNumber',
+        'char.QuestMonsters',
+        'char.SkyEventWins',
+        'char.IsVip',
+        'char.VipExpirationTime',
+        'member.G_Name',
+        'member.G_Status',
+        'guild.G_Mark',
+        'guild.G_Score',
+        'guild.G_Master',
+        'guild.G_Rival',
+        'guild.G_Union',
       ])
-      .limit(Number(top))
-      .orderBy({ Resets: 'DESC', cLevel: 'DESC', Name: 'ASC' })
-      .getRawMany()
+      .leftJoin('char.member', 'member')
+      .leftJoin('member.guild', 'guild')
+      .limit(limit)
+      .orderBy({ 'char.Resets': 'DESC', 'char.cLevel': 'DESC', 'char.Name': 'ASC' })
+      .getMany()
 
-    res.json(characters)
+    res.json(
+      characters.map(({ Strength, Dexterity, Vitality, Energy, Leadership, LevelUpPoint, ...char }) => {
+        if (char.member) {
+          char.member = {
+            ...char.member,
+            guild: {
+              ...char.member.guild,
+              G_Mark: char.member.guild.G_Mark.toString('hex') as any,
+            },
+          }
+        }
+
+        return {
+          ...char,
+          Inventory: char.Inventory.toString('hex').substr(0, 240),
+          total_stats: Strength + Dexterity + Vitality + Energy + Leadership + LevelUpPoint,
+        }
+      }),
+    )
   } catch (error) {
     next(error)
   }
@@ -83,9 +144,7 @@ export const getMany: RequestHandler = async (req, res, next) => {
 
 export const getHOF: RequestHandler = async (_req, res, next) => {
   try {
-    const hofRepository = getRepository(nyx_hof)
-
-    const characters = await hofRepository
+    const characters = await getRepository(nyx_hof)
       .createQueryBuilder()
       .select(['name', 'reset', 'level', 'class', 'date', 'rank'])
       .where({ rank: 1 })

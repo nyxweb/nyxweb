@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm'
+import { Entity, Column, PrimaryColumn, OneToOne, JoinColumn } from 'typeorm'
+import { GuildMember } from './GuildMember'
 
 @Entity('Character')
 export class Character {
@@ -106,4 +107,8 @@ export class Character {
 
   @Column('int')
   VipExpirationTime: number
+
+  @OneToOne(() => GuildMember)
+  @JoinColumn({ name: 'Name' })
+  member: GuildMember
 }
