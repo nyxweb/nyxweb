@@ -15,15 +15,13 @@ export const ServerStatus = () => {
           <span>{serverName}</span>
           <span>
             Online{` `}
-            <span className='count'>
-              {!serverStatus || onlineCount <= 0 ? 0 : onlineCount}
-            </span>
+            <span className='count'>{!serverStatus || onlineCount <= 0 ? 0 : onlineCount}</span>
           </span>
         </ServerName>
         <Progress>
           <Loader style={{ width: (onlineCount / maxOnline) * 100 + '%' }} />
         </Progress>
-        <Link to='server-information'>Server Information</Link>
+        <Link to='server-info'>Server Information</Link>
       </Details>
     </Wrapper>
   )

@@ -4,7 +4,7 @@ import { News } from '../pages/News'
 import { Register } from '../pages/Register'
 import { Download } from '../pages/Download'
 import { Rankings } from '../pages/Rankings'
-import { ServerInformation } from '../pages/ServerInformation'
+import { ServerInfo } from '../pages/ServerInfo'
 
 // Private routes
 import { Character } from '../pages/Character'
@@ -21,7 +21,7 @@ export const Routes = () => {
       <Route component={Register} path='/create-account' exact />
       <Route component={Download} path='/download-game' exact />
       <Route component={Rankings} path='/rankings' />
-      <Route component={ServerInformation} path='/server-information' />
+      <Route component={ServerInfo} path='/server-info' />
       <PrivateRoute component={Character} path='/character' />
       <Route component={DoesntExist} />
     </Switch>
