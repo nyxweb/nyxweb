@@ -37,18 +37,19 @@ export const getGuilds: RequestHandler = async (req, res, next) => {
         G_Name,
         G_Mark,
         G_Score,
+        G_Master,
         (
-          SELECT SUM(Resets) FROM Character
+          SELECT SUM(cLevel) FROM Character
           LEFT JOIN GuildMember ON Character.Name = GuildMember.Name
           WHERE GuildMember.G_Name = Guild.G_Name
-        ) as resets,
+        ) as levels,
         (
           SELECT COUNT(*) FROM Character
           LEFT JOIN GuildMember ON Character.Name = GuildMember.Name
           WHERE GuildMember.G_Name = Guild.G_Name
         ) as members
       FROM Guild
-      ORDER BY resets DESC, members DESC, G_Name ASC
+      ORDER BY levels DESC, members DESC, G_Name ASC
     `,
     )
 

@@ -1,9 +1,11 @@
-import { Entity, Column, PrimaryColumn, OneToOne, JoinColumn } from 'typeorm'
+import { Entity, Column, PrimaryColumn, OneToOne, JoinColumn, ManyToOne } from 'typeorm'
+import { AccountCharacter } from '.'
 import { GuildMember } from './GuildMember'
+import { MEMB_STAT } from './MEMB_STAT'
 
 @Entity('Character')
 export class Character {
-  @Column('varchar', { length: 10 })
+  @PrimaryColumn('varchar', { length: 10 })
   AccountID: string
 
   @PrimaryColumn('varchar', { unique: true, length: 10 })
@@ -111,4 +113,12 @@ export class Character {
   @OneToOne(() => GuildMember)
   @JoinColumn({ name: 'Name' })
   member: GuildMember
+
+  @ManyToOne(() => AccountCharacter, (acc) => acc.character)
+  @JoinColumn({ name: 'AccountID' })
+  account_character: AccountCharacter
+
+  @ManyToOne(() => MEMB_STAT, (memb) => memb.character)
+  @JoinColumn({ name: 'AccountID' })
+  memb_stat: MEMB_STAT
 }

@@ -1,5 +1,5 @@
 export const guildHexDecode = (key: string) => {
-  switch (key) {
+  switch (key.toLowerCase()) {
     case '1':
       return '#000000'
     case '2':
@@ -18,18 +18,19 @@ export const guildHexDecode = (key: string) => {
       return '#00ff00'
     case '9':
       return '#01ff8d'
-    case 'A':
+    case 'a':
       return '#00ffff'
-    case 'B':
+    case 'b':
       return '#008aff'
-    case 'C':
+    case 'c':
       return '#0000fe'
-    case 'D':
+    case 'd':
       return '#8c00ff'
-    case 'E':
+    case 'e':
       return '#ff00fe'
-    case 'F':
+    case 'f':
       return '#ff0080'
+    case '0':
     default:
       return 'transparent'
   }

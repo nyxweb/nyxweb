@@ -1,4 +1,4 @@
-export interface HOFCharacter {
+export interface IHOFCharacter {
   name: string
   reset: number
   level: number
@@ -9,45 +9,64 @@ export interface HOFCharacter {
 
 export interface RankingState {
   hof: {
-    characters: HOFCharacter[] | null
+    characters: IHOFCharacter[] | null
     loading: boolean
   }
   character: {
-    data: Character | null
+    data: ICharacter | null
+    loading: boolean
+  }
+  characters: {
+    data: ICharacter[] | null
+    loading: boolean
+  }
+  guilds_top5: {
+    data: IGuild[] | null
     loading: boolean
   }
 }
 
-interface Guild {
-  name: string
-  mark: string
-  master: string
-  score: number
-  position: number
+export interface IGuild {
+  G_Name: string
+  G_Mark: string
+  G_Score: number
+  G_Master: string
+  levels: number
+  members: number
 }
 
-export interface Character {
-  name: string
-  class: number
-  level: number
-  reset: number
-  total_points: number
-  equipment: string
-  zen: number
-  map_number: number
-  map_pos_x: number
-  map_pos_y: number
-  pk_count: number
-  ctl_code: number
-  chat_limit_time: number
-  ban_post: number
-  is_married: number
-  marry_name: string
-  quest_in_progress: number
-  quest_number: number
-  quest_monsters: number
-  sky_event_wins: number
-  is_vip: number
-  vip_expiration: number
-  guild: null | Guild
+export interface IGuildMember {
+  G_Name: string
+  G_Status: 0 | 32 | 64 | 128
+  guild: IGuild
+}
+
+export interface IMEMB_STAT {
+  ConnectStat: 0 | 1
+  ConnectTM: Date
+  DisConnectTM: Date
+}
+
+export interface ICharacter {
+  Name: string
+  cLevel: number
+  Class: number
+  Inventory: string
+  Money: number
+  MapNumber: number
+  PkCount: number
+  ChatLimitTime: number
+  Resets: number
+  BanPost: number
+  IsMarried: number
+  MarryName: string | null
+  QuestInProgress: number
+  QuestNumber: number
+  QuestMonsters: number
+  SkyEventWins: number
+  IsVip: number
+  VipExpirationTime: number
+  total_stats: number
+  member: IGuildMember | null
+  memb_stat: IMEMB_STAT | null
 }

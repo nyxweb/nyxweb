@@ -14,6 +14,7 @@ export const getOne: RequestHandler = async (req, res, next) => {
         'char.Name',
         'char.Resets',
         'char.cLevel',
+        'char.Class',
         'char.Strength',
         'char.Dexterity',
         'char.Vitality',
@@ -74,8 +75,8 @@ export const getOne: RequestHandler = async (req, res, next) => {
 
 export const getMany: RequestHandler = async (req, res, next) => {
   try {
-    const { top = 50 } = req.query
-    const limit = isNaN(Number(top)) || Number(top) > 100 || Number(top) < 1 ? 50 : Number(top)
+    const { top } = req.query
+    const limit = isNaN(Number(top)) || Number(top) < 1 ? undefined : Number(top)
 
     const characters = await getRepository(Character)
       .createQueryBuilder('char')
@@ -83,6 +84,7 @@ export const getMany: RequestHandler = async (req, res, next) => {
         'char.Name',
         'char.Resets',
         'char.cLevel',
+        'char.Class',
         'char.Strength',
         'char.Dexterity',
         'char.Vitality',
@@ -111,9 +113,15 @@ export const getMany: RequestHandler = async (req, res, next) => {
         'guild.G_Master',
         'guild.G_Rival',
         'guild.G_Union',
+        // 'account_character.GameIDC',
+        'memb_stat.ConnectStat',
+        'memb_stat.ConnectTM',
+        'memb_stat.DisConnectTM',
       ])
       .leftJoin('char.member', 'member')
       .leftJoin('member.guild', 'guild')
+      // .leftJoin('char.account_character', 'account_character')
+      .leftJoin('char.memb_stat', 'memb_stat')
       .limit(limit)
       .orderBy({ 'char.Resets': 'DESC', 'char.cLevel': 'DESC', 'char.Name': 'ASC' })
       .getMany()

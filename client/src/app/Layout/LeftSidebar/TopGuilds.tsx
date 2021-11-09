@@ -1,10 +1,19 @@
+import { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import { useAppDispatch, useAppSelector } from 'store'
 
-import { SideContentBlock } from 'app/components'
+import { GuildMark, ReactLoader, SideContentBlock } from 'app/components'
+import { getGuildsTop5 } from 'store/ranking'
 
 export const TopGuilds = () => {
   const history = useHistory()
+  const dispatch = useAppDispatch()
+  const { data, loading } = useAppSelector((state) => state.ranking.guilds_top5)
+
+  useEffect(() => {
+    dispatch(getGuildsTop5())
+  }, [dispatch])
 
   const linkToGuildPage = (name: string) => {
     history.push(`/guild/${name}`)
@@ -18,50 +27,35 @@ export const TopGuilds = () => {
             <tr>
               <th>#</th>
               <th style={{ textAlign: 'left' }}>name</th>
+              <th>levels</th>
               <th>membs</th>
-              <th>resets</th>
               <th />
             </tr>
           </thead>
           <tbody>
-            <tr onClick={() => linkToGuildPage('NyxMu')}>
-              <td>1</td>
-              <td style={{ textAlign: 'left' }}>NyxMu</td>
-              <td>44</td>
-              <td>465</td>
-              <td style={{ padding: 0 }}>mar</td>
-            </tr>
-            <tr onClick={() => linkToGuildPage('NyxMu')}>
-              <td>2</td>
-              <td style={{ textAlign: 'left' }}>NyxMu</td>
-              <td>44</td>
-              <td>465</td>
-              <td style={{ padding: 0 }}>mar</td>
-            </tr>
-            <tr onClick={() => linkToGuildPage('NyxMu')}>
-              <td>3</td>
-              <td style={{ textAlign: 'left' }}>NyxMu</td>
-              <td>44</td>
-              <td>465</td>
-              <td style={{ padding: 0 }}>mar</td>
-            </tr>
-            <tr onClick={() => linkToGuildPage('NyxMu')}>
-              <td>4</td>
-              <td style={{ textAlign: 'left' }}>NyxMu</td>
-              <td>44</td>
-              <td>465</td>
-              <td style={{ padding: 0 }}>mar</td>
-            </tr>
-            <tr onClick={() => linkToGuildPage('NyxMu')}>
-              <td>5</td>
-              <td style={{ textAlign: 'left' }}>NyxMu</td>
-              <td>44</td>
-              <td>465</td>
-              <td style={{ padding: 0 }}>mar</td>
-            </tr>
-            <tr>
-              <td colSpan={5}>no guilds found...</td>
-            </tr>
+            {loading ? (
+              <tr>
+                <td colSpan={5}>
+                  <ReactLoader />
+                </td>
+              </tr>
+            ) : !data?.length ? (
+              <tr>
+                <td colSpan={5}>no guilds found...</td>
+              </tr>
+            ) : (
+              data.map((guild, index) => (
+                <tr key={guild.G_Name + index} onClick={() => linkToGuildPage(guild.G_Name)}>
+                  <td>{index + 1}</td>
+                  <td style={{ textAlign: 'left' }}>{guild.G_Name}</td>
+                  <td>{guild.levels.toLocaleString()}</td>
+                  <td>{guild.members}</td>
+                  <td style={{ padding: 0 }}>
+                    <GuildMark markHex={guild.G_Mark} size={30} />
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </Wrapper>

@@ -3,12 +3,12 @@ import styled from 'styled-components'
 
 import { getClassInfo } from 'utils'
 import { MainContentBlock, Modal, ReactLoader } from 'app/components'
-import { HOFCharacter, getHOF } from 'store/ranking'
+import { IHOFCharacter, getHOF } from 'store/ranking'
 import { useAppDispatch, useAppSelector } from 'store'
 import { ModalCharacter } from 'app/components'
 
 interface Props {
-  char: HOFCharacter
+  char: IHOFCharacter
   onClick: () => void
 }
 
@@ -35,7 +35,7 @@ export const HOF = () => {
     dispatch(getHOF())
   }, [dispatch])
 
-  const handleClick = (char: HOFCharacter) => {
+  const handleClick = (char: IHOFCharacter) => {
     setModal({ active: true, name: char.name })
   }
 

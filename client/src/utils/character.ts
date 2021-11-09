@@ -1,3 +1,5 @@
+import { IGuildMember } from 'store/ranking'
+
 interface CharacterInfo {
   className: { short: string; long: string }
   classImage: { short: string; long: string }
@@ -242,5 +244,28 @@ export const getGuildPosition = (position: number) => {
       return `<font color='#ffad73'>Battle Master</font>`
     default:
       return `<font color='#e6f7ff'>Member</font>`
+  }
+}
+
+export const getGuildRank = (status: IGuildMember['G_Status']) => {
+  switch (status) {
+    case 128:
+      return {
+        title: 'Guild Master',
+        image: '/images/ranks/crown.png',
+      }
+    case 64:
+      return {
+        title: 'Battle Master',
+        image: '/images/ranks/swords.png',
+      }
+    case 32:
+      return {
+        title: 'Guild Assistant',
+        image: '/images/ranks/shield.png',
+      }
+    case 0:
+    default:
+      return null
   }
 }

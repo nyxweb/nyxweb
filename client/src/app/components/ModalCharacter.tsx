@@ -25,10 +25,10 @@ export const ModalCharacter: React.FC<Props> = ({ name }) => {
         <div>Couldn't get character information</div>
       ) : (
         <div>
-          <div>name: {data.name}</div>
-          <div>class: {data.class}</div>
-          <div>reset: {data.reset}</div>
-          <div>level: {data.level}</div>
+          <div>name: {data.Name}</div>
+          <div>class: {data.Class}</div>
+          <div>reset: {data.Resets}</div>
+          <div>level: {data.cLevel}</div>
         </div>
       )}
     </div>
