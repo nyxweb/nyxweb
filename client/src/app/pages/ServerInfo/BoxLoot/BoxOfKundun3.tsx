@@ -1,57 +1,28 @@
-import { Item } from './index'
-import { Row, Wrapper, ItemPlaceholder } from './styles'
+import { Row, Wrapper } from './styles'
 
 export const BoxOfKundun3 = () => {
   return (
     <Wrapper>
       <Row>
-        <Item group={7} id={3} />
-        <Item group={7} id={1} />
-        <Item group={7} id={14} />
-        <ItemPlaceholder />
-        <Item group={7} id={26} />
+        <img src='/images/items/equipped/legendary.jpg' alt='legendary' />
+        <img src='/images/items/equipped/dragon.jpg' alt='dragon' />
+        <img src='/images/items/equipped/guardian.jpg' alt='guardian' />
+        <img src='/images/items/equipped/stormcrow.jpg' alt='stormcrow' />
       </Row>
       <Row>
-        <Item group={8} id={3} />
-        <Item group={8} id={1} />
-        <Item group={8} id={14} />
-        <Item group={8} id={15} />
-        <Item group={8} id={26} />
+        <img src='/images/items/equipped/adamantine.jpg' alt='adamantine' />
+        <img src='/images/items/equipped/lightningsword.jpg' alt='lightningsword' />
+        <img src='/images/items/equipped/aquagoldencrossbow.jpg' alt='aquagoldencrossbow' />
+        <img src='/images/items/equipped/thunderblade.jpg' alt='thunderblade' />
       </Row>
       <Row>
-        <Item group={9} id={3} />
-        <Item group={9} id={1} />
-        <Item group={9} id={14} />
-        <Item group={9} id={15} />
-        <Item group={9} id={26} />
+        <img src='/images/items/equipped/greatscepter.jpg' alt='greatscepter' />
+        <img src='/images/items/equipped/staffofarchangel.jpg' alt='staffofarchangel' />
+        <img src='/images/items/equipped/unicornstaff.jpg' alt='unicornstaff' />
+        <img src='/images/items/equipped/legendaryshield.jpg' alt='legendaryshield' />
       </Row>
       <Row>
-        <Item group={10} id={3} />
-        <Item group={10} id={1} />
-        <Item group={10} id={14} />
-        <Item group={10} id={15} />
-        <Item group={10} id={26} />
-      </Row>
-      <Row>
-        <Item group={11} id={3} />
-        <Item group={11} id={1} />
-        <Item group={11} id={14} />
-        <Item group={11} id={15} />
-        <Item group={11} id={26} />
-      </Row>
-      <Row>
-        <Item group={5} id={10} />
-        <Item group={0} id={14} />
-        <Item group={4} id={16} />
-        <Item group={0} id={18} />
-        <Item group={2} id={10} />
-      </Row>
-      <Row>
-        <Item group={6} id={14} />
-        <Item group={6} id={8} />
-        <Item group={4} id={14} />
-        <Item group={5} id={8} />
-        <Item group={6} id={7} />
+        <img src='/images/items/equipped/spikeshield.jpg' alt='spikeshield' />
       </Row>
     </Wrapper>
   )

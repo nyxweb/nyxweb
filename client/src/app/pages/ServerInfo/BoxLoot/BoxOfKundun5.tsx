@@ -1,50 +1,25 @@
-import { Item } from './index'
 import { Row, Wrapper, ItemPlaceholder } from './styles'
 
 export const BoxOfKundun5 = () => {
   return (
     <Wrapper>
       <Row>
-        <Item group={7} id={22} />
-        <Item group={7} id={21} />
-        <Item group={7} id={24} />
+        <img src='/images/items/equipped/darksoul.jpg' alt='darksoul' />
+        <img src='/images/items/equipped/greatdragon.jpg' alt='greatdragon' />
+        <img src='/images/items/equipped/redspirit.jpg' alt='redspirit' />
+        <img src='/images/items/equipped/hurricane.jpg' alt='hurricane' />
+      </Row>
+      <Row>
+        <img src='/images/items/equipped/darkmaster.jpg' alt='darkmaster' />
+        <img src='/images/items/equipped/knightblade.jpg' alt='knightblade' />
+        <img src='/images/items/equipped/greatraincrossbow.jpg' alt='greatraincrossbow' />
+        <img src='/images/items/equipped/blackreignblade.jpg' alt='blackreignblade' />
+      </Row>
+      <Row>
+        <img src='/images/items/equipped/greatlordscepter.jpg' alt='greatlordscepter' />
+        <img src='/images/items/equipped/kundunstaff.jpg' alt='kundunstaff' />
         <ItemPlaceholder />
-        <Item group={7} id={28} />
-      </Row>
-      <Row>
-        <Item group={8} id={22} />
-        <Item group={8} id={21} />
-        <Item group={8} id={24} />
-        <Item group={8} id={23} />
-        <Item group={8} id={28} />
-      </Row>
-      <Row>
-        <Item group={9} id={22} />
-        <Item group={9} id={21} />
-        <Item group={9} id={24} />
-        <Item group={9} id={23} />
-        <Item group={9} id={28} />
-      </Row>
-      <Row>
-        <Item group={10} id={22} />
-        <Item group={10} id={21} />
-        <Item group={10} id={24} />
-        <Item group={10} id={23} />
-        <Item group={10} id={28} />
-      </Row>
-      <Row>
-        <Item group={11} id={22} />
-        <Item group={11} id={21} />
-        <Item group={11} id={24} />
-        <Item group={11} id={23} />
-        <Item group={11} id={28} />
-      </Row>
-      <Row>
-        <Item group={5} id={11} />
-        <Item group={0} id={20} />
-        <Item group={4} id={19} />
-        <Item group={0} id={21} />
-        <Item group={2} id={12} />
+        <ItemPlaceholder />
       </Row>
     </Wrapper>
   )

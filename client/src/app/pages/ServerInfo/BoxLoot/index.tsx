@@ -1,10 +1,5 @@
-import { Fragment } from 'react'
 import styled from 'styled-components'
 import { Route, Switch, Link } from 'react-router-dom'
-import { v4 as uuid } from 'uuid'
-import ReactTooltip from 'react-tooltip'
-
-import items from 'utils/items.json'
 
 import { BoxOfKundun1 } from './BoxOfKundun1'
 import { BoxOfKundun2 } from './BoxOfKundun2'
@@ -21,7 +16,7 @@ export const BoxLoot = () => {
   return (
     <Wrapper>
       <SelectBox>
-        <StyledLink to={`${pagePrefix}/star`} className={isActive('star')}>
+        {/* <StyledLink to={`${pagePrefix}/star`} className={isActive('star')}>
           <img src='/images/items/14/11-1.gif' alt='star' />
         </StyledLink>
         <StyledLink to={`${pagePrefix}/sack`} className={isActive('sack')}>
@@ -38,7 +33,7 @@ export const BoxLoot = () => {
         </StyledLink>
         <StyledLink to={`${pagePrefix}/boh`} className={isActive('boh')}>
           <img src='/images/items/14/11-7.gif' alt='boh' />
-        </StyledLink>
+        </StyledLink> */}
         <StyledLink to={`${pagePrefix}/bok1`} className={isActive('bok1')}>
           <img src='/images/items/14/11-8.gif' alt='bok1' />
         </StyledLink>
@@ -54,56 +49,20 @@ export const BoxLoot = () => {
         <StyledLink to={`${pagePrefix}/bok5`} className={isActive('bok5')}>
           <img src='/images/items/14/11-12.gif' alt='bok5' />
         </StyledLink>
-        <StyledLink to={`${pagePrefix}/loh`} className={isActive('loh')}>
+        {/* <StyledLink to={`${pagePrefix}/loh`} className={isActive('loh')}>
           <img src='/images/items/14/11-13.gif' alt='loh' />
-        </StyledLink>
+        </StyledLink> */}
       </SelectBox>
       <ItemsContent>
         <Switch>
-          <Route path={`${pagePrefix}/bok1`} component={BoxOfKundun1} />
           <Route path={`${pagePrefix}/bok2`} component={BoxOfKundun2} />
           <Route path={`${pagePrefix}/bok3`} component={BoxOfKundun3} />
           <Route path={`${pagePrefix}/bok4`} component={BoxOfKundun4} />
           <Route path={`${pagePrefix}/bok5`} component={BoxOfKundun5} />
+          <Route path={pagePrefix} component={BoxOfKundun1} />
         </Switch>
       </ItemsContent>
     </Wrapper>
-  )
-}
-
-interface Props {
-  group: number
-  id: number
-}
-
-interface IItem {
-  name: string
-  x: number
-  y: number
-  options: {
-    excellent: number
-    additional: string
-  }
-  class: number[]
-}
-
-const ItemWrapper = styled.div`
-  display: inline-flex;
-  min-width: 64px;
-  justify-content: center;
-`
-
-export const Item: React.FC<Props> = ({ group, id }) => {
-  const item: IItem = (items as any)[group].items[id]
-  const tooltip_id = uuid()
-
-  return (
-    <Fragment>
-      <ItemWrapper data-tip={item.name} data-for={tooltip_id}>
-        <img src={`/images/items/${group}/${id}.gif`} alt={item.name} />
-      </ItemWrapper>
-      <ReactTooltip place='top' type='dark' effect='solid' offset={{ top: 10 }} id={tooltip_id} />
-    </Fragment>
   )
 }
 

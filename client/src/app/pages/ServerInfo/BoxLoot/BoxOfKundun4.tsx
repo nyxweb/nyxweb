@@ -1,57 +1,25 @@
-import { Item } from './index'
-import { Row, Wrapper, ItemPlaceholder } from './styles'
+import { Row, Wrapper } from './styles'
 
 export const BoxOfKundun4 = () => {
   return (
     <Wrapper>
       <Row>
-        <Item group={7} id={18} />
-        <Item group={7} id={16} />
-        <Item group={7} id={19} />
-        <ItemPlaceholder />
-        <Item group={7} id={27} />
+        <img src='/images/items/equipped/grandsoul.jpg' alt='grandsoul' />
+        <img src='/images/items/equipped/blackdragon.jpg' alt='blackdragon' />
+        <img src='/images/items/equipped/divine.jpg' alt='divine' />
+        <img src='/images/items/equipped/thunderhawk.jpg' alt='thunderhawk' />
       </Row>
       <Row>
-        <Item group={8} id={18} />
-        <Item group={8} id={16} />
-        <Item group={8} id={19} />
-        <Item group={8} id={20} />
-        <Item group={8} id={27} />
+        <img src='/images/items/equipped/darksteel.jpg' alt='darksteel' />
+        <img src='/images/items/equipped/swordofarchangel.jpg' alt='swordofarchangel' />
+        <img src='/images/items/equipped/saintcrossbow.jpg' alt='saintcrossbow' />
+        <img src='/images/items/equipped/runeblade.jpg' alt='runeblade' />
       </Row>
       <Row>
-        <Item group={9} id={18} />
-        <Item group={9} id={16} />
-        <Item group={9} id={19} />
-        <Item group={9} id={20} />
-        <Item group={9} id={27} />
-      </Row>
-      <Row>
-        <Item group={10} id={18} />
-        <Item group={10} id={16} />
-        <Item group={10} id={19} />
-        <Item group={10} id={20} />
-        <Item group={10} id={27} />
-      </Row>
-      <Row>
-        <Item group={11} id={18} />
-        <Item group={11} id={16} />
-        <Item group={11} id={19} />
-        <Item group={11} id={20} />
-        <Item group={11} id={27} />
-      </Row>
-      <Row>
-        <Item group={5} id={9} />
-        <Item group={0} id={19} />
-        <Item group={4} id={17} />
-        <Item group={0} id={31} />
-        <Item group={2} id={11} />
-      </Row>
-      <Row>
-        <Item group={6} id={15} />
-        <Item group={6} id={12} />
-        <ItemPlaceholder />
-        <Item group={0} id={16} />
-        <Item group={6} id={9} />
+        <img src='/images/items/equipped/lordscepter.jpg' alt='lordscepter' />
+        <img src='/images/items/equipped/swordofdestruction.jpg' alt='swordofdestruction' />
+        <img src='/images/items/equipped/grandsoulshield.jpg' alt='grandsoulshield' />
+        <img src='/images/items/equipped/dragonshield.jpg' alt='dragonshield' />
       </Row>
     </Wrapper>
   )

@@ -4,6 +4,10 @@ import styled from 'styled-components'
 import { MainContentBlock } from 'app/components'
 
 import { BoxLoot } from './BoxLoot'
+import { Monsters } from './Monsters'
+import { RatesFormulas } from './RatesFormulas'
+import { General } from './General'
+import { Events } from './Events'
 
 export const ServerInfo = () => {
   const isActive = (page: string) => {
@@ -29,14 +33,14 @@ export const ServerInfo = () => {
           <MainLink to='/server-info/box-loot' className={isActive('box-loot')}>
             Box Loot
           </MainLink>
-          <MainLink to='/server-info/gold' className={isActive('gold')}>
-            Gold
-          </MainLink>
         </MainNav>
         <InfoWrapper>
           <Switch>
+            <Route path='/server-info/general' component={General} />
+            <Route path='/server-info/rates' component={RatesFormulas} />
+            <Route path='/server-info/events' component={Events} />
+            <Route path='/server-info/monsters' component={Monsters} />
             <Route path='/server-info/box-loot' component={BoxLoot} />
-            {/* <Route path='/server-info' component={General} /> */}
           </Switch>
         </InfoWrapper>
       </MainContentBlock>
