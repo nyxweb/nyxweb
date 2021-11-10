@@ -5,7 +5,7 @@ export const ServerStatus = () => {
   const serverStatus = true
   const onlineCount = 178
   const maxOnline = 300
-  const serverName = 'NyxMu S1'
+  const serverName = 'NyxMu NoReset'
 
   return (
     <Wrapper>
@@ -19,7 +19,7 @@ export const ServerStatus = () => {
           </span>
         </ServerName>
         <Progress>
-          <Loader style={{ width: (onlineCount / maxOnline) * 100 + '%' }} />
+          <Loader style={{ width: serverStatus ? (onlineCount / maxOnline) * 100 : 0 + '%' }} />
         </Progress>
         <Link to='server-info'>Server Information</Link>
       </Details>

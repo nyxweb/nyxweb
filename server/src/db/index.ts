@@ -3,7 +3,17 @@ import { createConnection } from 'typeorm'
 import 'reflect-metadata'
 import 'dotenv/config'
 
-import { MEMB_INFO, MEMB_STAT, AccountCharacter, Character, Guild, GuildMember, nyx_resources, nyx_hof } from './entity'
+import {
+  MEMB_INFO,
+  MEMB_STAT,
+  AccountCharacter,
+  Character,
+  Guild,
+  GuildMember,
+  nyx_resources,
+  nyx_hof,
+  nyx_account_logs,
+} from './entity'
 
 (async () => {
   try {
@@ -19,7 +29,17 @@ import { MEMB_INFO, MEMB_STAT, AccountCharacter, Character, Guild, GuildMember, 
       extra: {
         trustServerCertificate: true,
       },
-      entities: [MEMB_INFO, MEMB_STAT, AccountCharacter, Character, Guild, GuildMember, nyx_resources, nyx_hof],
+      entities: [
+        MEMB_INFO,
+        MEMB_STAT,
+        AccountCharacter,
+        Character,
+        Guild,
+        GuildMember,
+        nyx_resources,
+        nyx_hof,
+        nyx_account_logs,
+      ],
     })
 
     logger.info(`Database connection successfully established on ${process.env.DB_HOST}:${process.env.DB_PORT}.`)

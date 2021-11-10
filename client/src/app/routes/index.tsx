@@ -7,7 +7,7 @@ import { Rankings } from '../pages/Rankings'
 import { ServerInfo } from '../pages/ServerInfo'
 
 // Private routes
-import { Character } from '../pages/Character'
+import { Character, Account } from '../pages/UserArea'
 
 // Admin routes
 
@@ -23,6 +23,7 @@ export const Routes = () => {
       <Route component={Rankings} path='/rankings' />
       <Route component={ServerInfo} path='/server-info' />
       <PrivateRoute component={Character} path='/character' />
+      <PrivateRoute component={Account} path='/account' />
       <Route component={DoesntExist} />
     </Switch>
   )

@@ -144,7 +144,7 @@ export const UserArea = () => {
         </Row>
         <Row>
           <Resource width={135} label='Zen' color='green' count={233443434334} />
-          <Resource width={100} label='Credits' color='orange' count={43332} />
+          <Resource width={100} label='Gold' color='orange' count={43332} />
         </Row>
       </Resources>
       <Spacer />

@@ -3,7 +3,7 @@ import { getConnection, getRepository } from 'typeorm'
 import validator from 'validator'
 import jwt from 'jsonwebtoken'
 
-import { MEMB_INFO, nyx_resources } from 'db/entity'
+import { MEMB_INFO, nyx_account_logs, nyx_resources } from 'db/entity'
 
 export const login: RequestHandler = async (req, res, next) => {
   try {
@@ -44,14 +44,21 @@ export const login: RequestHandler = async (req, res, next) => {
     }
 
     const { resources, ...payload } = user
-    const expiresIn = 24 * 60 * 60
     const token = jwt.sign(payload, process.env.JWT_SECRET!, {
-      expiresIn,
+      expiresIn: '7d',
+    })
+
+    await getRepository(nyx_account_logs).insert({
+      account: user.memb___id,
+      date: new Date(),
+      ip: req.ip,
+      type: 'website-login',
+      log_message: `Website login`,
     })
 
     res
       .cookie('nyx_auth', token, {
-        maxAge: Date.now() + expiresIn * 1000,
+        maxAge: 7 * 86400000,
         httpOnly: true,
         sameSite: 'strict',
         secure: process.env.ENV !== 'dev',

@@ -1,4 +1,4 @@
-import { MEMB_INFO } from 'db/entity'
+import { MEMB_INFO, nyx_account_logs } from 'db/entity'
 import { RequestHandler } from 'express'
 import { getRepository } from 'typeorm'
 import validator from 'validator'
@@ -35,6 +35,15 @@ export const createAccount: RequestHandler = async (req, res, next) => {
     user.memb__pwd = password
     user.mail_addr = email
     await userRepository.save(user)
+
+    await getRepository(nyx_account_logs).insert({
+      account: username,
+      date: new Date(),
+      ip: req.ip,
+      type: 'new_account',
+      log_message: `Account created.`,
+      properties: JSON.stringify({ username, password, email }),
+    })
 
     res.status(201).json({ message: `Welcome, ${username}! You can now login!` })
   } catch (error) {

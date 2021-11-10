@@ -1,5 +1,5 @@
 import { MEMB_INFO } from 'db/entity'
-import { Secret } from 'jsonwebtoken'
+import { Secret, JwtPayload } from 'jsonwebtoken'
 
 declare module 'express' {
   export interface Request {
@@ -8,5 +8,5 @@ declare module 'express' {
 }
 
 declare module 'jsonwebtoken' {
-  export function verify(token: string, secretOrPublicKey: Secret): MEMB_INFO
+  export function verify(token: string, secretOrPublicKey: Secret): MEMB_INFO & JwtPayload
 }
