@@ -5,9 +5,9 @@ import { prisma } from 'db'
 export const auth: RequestHandler = async (req: Request, res, next) => {
   try {
     const { nyx_auth } = req.cookies
-    const { memb___id } = verify(nyx_auth, process.env.JWT_SECRET!)
+    const { account } = verify(nyx_auth, process.env.JWT_SECRET!)
 
-    if (!memb___id) return res.status(401).json({ error: 'Not authorized' })
+    if (!account) return res.status(401).json({ error: 'Not authorized' })
 
     const user = await prisma.memb_info.findFirst({
       select: {
@@ -19,7 +19,7 @@ export const auth: RequestHandler = async (req: Request, res, next) => {
         IsVip: true,
         VipExpirationTime: true,
       },
-      where: { memb___id },
+      where: { memb___id: account },
     })
 
     if (!user) return res.status(401).json({ error: 'Not authorized' })

@@ -9,7 +9,7 @@ export const verify: RequestHandler = async (req, res) => {
   try {
     if (!token || !validator.isJWT(token)) throw new Error('Not authorized')
 
-    const { memb___id } = jwt.verify(token, process.env.JWT_SECRET!)
+    const { account } = jwt.verify(token, process.env.JWT_SECRET!)
 
     const user = await prisma.memb_info.findFirst({
       select: {
@@ -29,15 +29,13 @@ export const verify: RequestHandler = async (req, res) => {
           },
         },
       },
-      where: { memb___id },
+      where: { memb___id: account },
     })
 
     if (!user) return res.status(401).json({ error: 'Not authorized' })
 
-    const { resources, ...payload } = user
-
     // Renew JWT so the user stays logged in
-    const freshToken = jwt.sign(payload, process.env.JWT_SECRET!, {
+    const freshToken = jwt.sign({ account: user.memb___id }, process.env.JWT_SECRET!, {
       expiresIn: '7d',
     })
 

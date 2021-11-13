@@ -18,5 +18,5 @@ declare module 'express' {
 }
 
 declare module 'jsonwebtoken' {
-  export function verify(token: string, secretOrPublicKey: Secret): IUser & JwtPayload
+  export function verify(token: string, secretOrPublicKey: Secret): { account: string } & JwtPayload
 }

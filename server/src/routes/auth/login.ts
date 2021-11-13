@@ -44,8 +44,7 @@ export const login: RequestHandler = async (req, res, next) => {
       })
     }
 
-    const { resources, ...payload } = user
-    const token = jwt.sign(payload, process.env.JWT_SECRET!, {
+    const token = jwt.sign({ account: user.memb___id }, process.env.JWT_SECRET!, {
       expiresIn: '7d',
     })
 
