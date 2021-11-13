@@ -179,7 +179,11 @@ export const Account = () => {
   )
 }
 
-const Wrapper = styled.div``
+const Wrapper = styled.div`
+  table td {
+    height: 45px;
+  }
+`
 
 const UserSubMenu = styled.div`
   display: flex;

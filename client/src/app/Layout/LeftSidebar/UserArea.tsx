@@ -1,109 +1,72 @@
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import ReactTooltip from 'react-tooltip'
+import { v4 as uuid } from 'uuid'
 
 import { Button } from 'app/components'
 import { useAppDispatch, useAppSelector } from 'store'
 import { userLogout } from 'store/user'
-
-interface IResource {
-  group: number
-  id: number
-  level?: number
-}
-
-const RESOURCES: Record<string, IResource> = {
-  chaos: {
-    group: 12,
-    id: 15,
-  },
-  bless: {
-    group: 14,
-    id: 13,
-  },
-  soul: {
-    group: 14,
-    id: 14,
-  },
-  life: {
-    group: 14,
-    id: 16,
-  },
-  creation: {
-    group: 14,
-    id: 22,
-  },
-  rena: {
-    group: 14,
-    id: 21,
-    level: 0,
-  },
-  stone: {
-    group: 14,
-    id: 21,
-    level: 1,
-  },
-  boh: {
-    group: 14,
-    id: 11,
-    level: 1,
-  },
-  box1: {
-    group: 14,
-    id: 11,
-    level: 7,
-  },
-  box2: {
-    group: 14,
-    id: 11,
-    level: 8,
-  },
-  box3: {
-    group: 14,
-    id: 11,
-    level: 9,
-  },
-  box4: {
-    group: 14,
-    id: 11,
-    level: 10,
-  },
-  box5: {
-    group: 14,
-    id: 11,
-    level: 11,
-  },
-  heart: {
-    group: 14,
-    id: 12,
-  },
-}
+import resources from 'utils/items.json'
 
 interface Props {
-  count: number | string
+  count: number
   width?: number
   height?: number
   color?: string
   label?: string
-  res?: keyof typeof RESOURCES
+  group?: number
+  id?: number
+  level?: number
 }
 
-const Resource: React.FC<Props> = ({ count, width = 30, height = 30, color, label, res }) => {
-  const resource = RESOURCES[res!]
-  const itemImage = resource
-    ? `${resource.group}/${resource.id}${resource.level ? `-${resource.level}` : ''}.gif`
-    : undefined
+const RES = resources as Record<
+  number,
+  {
+    title: string
+    items: Record<
+      number,
+      {
+        name: string
+        x: number
+        y: number
+        options: {
+          excellent: number | boolean
+          additional: string | boolean
+          skill?: boolean | 'tripple'
+        }
+        class?: number[]
+        levels?: Record<number, string>
+      }
+    >
+  }
+>
+
+const Resource: React.FC<Props> = ({ count, width = 30, height = 30, color, label, group, id, level }) => {
+  const tooltipId = uuid()
+  const ress = group && id ? RES[group].items[id] : null
+  const resName = label || !ress ? label : ress.levels && level ? ress.levels[level] || ress.name : ress.name
+  const itemImage = group && id ? `${group}/${id}${level ? `-${level}` : ''}.gif` : undefined
 
   return (
-    <ResourceWrapper width={width} height={height} image={itemImage}>
-      {label ? (
-        <>
-          {label}
-          <ResourceValue color={color}>{count.toLocaleString()}</ResourceValue>
-        </>
-      ) : (
-        count
-      )}
-    </ResourceWrapper>
+    <>
+      <ResourceWrapper
+        width={width}
+        height={height}
+        image={itemImage}
+        data-tip={`${resName}: ${count}`}
+        data-for={tooltipId}
+      >
+        {label ? (
+          <>
+            {label}
+            <ResourceValue color={color}>{count.toLocaleString()}</ResourceValue>
+          </>
+        ) : (
+          count !== 0 && <ResourceValue>{count}</ResourceValue>
+        )}
+      </ResourceWrapper>
+      <ReactTooltip place='top' type='dark' effect='solid' offset={{ top: 10 }} id={tooltipId} />
+    </>
   )
 }
 
@@ -126,22 +89,22 @@ export const UserArea = () => {
       {user.resources && (
         <Resources>
           <Row>
-            <Resource count={user.resources.chaos} res='chaos' />
-            <Resource count={user.resources.bless} res='bless' />
-            <Resource count={user.resources.soul} res='soul' />
-            <Resource count={user.resources.life} res='life' />
-            <Resource count={user.resources.creation} res='creation' />
-            <Resource count={user.resources.rena} res='rena' />
-            <Resource count={user.resources.stone} res='stone' />
+            <Resource count={user.resources.chaos} group={12} id={15} />
+            <Resource count={user.resources.bless} group={14} id={13} />
+            <Resource count={user.resources.soul} group={14} id={14} />
+            <Resource count={user.resources.life} group={14} id={16} />
+            <Resource count={user.resources.creation} group={14} id={22} />
+            <Resource count={user.resources.rena} group={14} id={21} level={0} />
+            <Resource count={user.resources.stone} group={14} id={21} level={1} />
           </Row>
           <Row>
-            <Resource count={user.resources.boh} />
-            <Resource count={user.resources.box1} />
-            <Resource count={user.resources.box2} />
-            <Resource count={user.resources.box3} />
-            <Resource count={user.resources.box4} />
-            <Resource count={user.resources.box5} />
-            <Resource count={user.resources.heart} />
+            <Resource count={user.resources.boh} group={14} id={11} level={1} />
+            <Resource count={user.resources.box1} group={14} id={11} level={7} />
+            <Resource count={user.resources.box2} group={14} id={11} level={8} />
+            <Resource count={user.resources.box3} group={14} id={11} level={9} />
+            <Resource count={user.resources.box4} group={14} id={11} level={10} />
+            <Resource count={user.resources.box5} group={14} id={11} level={11} />
+            <Resource count={user.resources.heart} group={14} id={11} level={3} />
           </Row>
           <Row>
             <Resource width={135} label='Zen' color='green' count={user.resources.zen} />
@@ -222,7 +185,7 @@ const ResourceWrapper = styled.div<{ width: number; height: number; image?: stri
   box-shadow: 0px 0 15px 0 rgba(0, 0, 0, 0.2);
   background-color: rgba(63, 85, 114, 0.1);
   ${({ image }) =>
-    image && `background: rgba(63, 85, 114, 0.1) url('/images/items/${image}') no-repeat center center/contain;`}
+    image && `background: rgba(63, 85, 114, 0.1) url('/images/items/${image}') no-repeat center center/80% 80%;`}
   display: flex;
   align-items: ${({ image }) => (!image ? `center` : `flex-start`)};
   justify-content: ${({ image }) => (!image ? `center` : `flex-end`)};
@@ -231,6 +194,8 @@ const ResourceWrapper = styled.div<{ width: number; height: number; image?: stri
 const ResourceValue = styled.span<{ color?: string }>`
   ${({ color }) => color && `color: ${color};`}
   margin-left: 5px;
+  ${({ color }) =>
+    !color && `padding: 0 2px; background-color: rgba(0, 0, 0, 0.5); border-radius: 5px; font-size: 11px;`}
 `
 
 const UserMenu = styled.div`

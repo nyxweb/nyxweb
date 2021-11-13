@@ -1,7 +1,7 @@
 export interface IResources {
   storage: string
-  zen: string
-  gold: string
+  zen: number
+  gold: number
   chaos: number
   bless: number
   soul: number

@@ -56,6 +56,7 @@ export const login: RequestHandler = async (req, res, next) => {
         ip: req.ip,
         type: 'website-login',
         log_message: `Website login`,
+        properties: JSON.stringify({ 'user-agent': req.headers['user-agent'] }),
       },
     })
 

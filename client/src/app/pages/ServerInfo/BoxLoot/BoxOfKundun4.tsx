@@ -1,4 +1,4 @@
-import { Row, Wrapper } from './styles'
+import { Row, Wrapper, ItemPlaceholder } from './styles'
 
 export const BoxOfKundun4 = () => {
   return (
@@ -18,8 +18,14 @@ export const BoxOfKundun4 = () => {
       <Row>
         <img src='/images/items/equipped/lordscepter.jpg' alt='lordscepter' />
         <img src='/images/items/equipped/swordofdestruction.jpg' alt='swordofdestruction' />
+        <img src='/images/items/equipped/dragonsoulstaff.jpg' alt='dragonsoulstaff' />
         <img src='/images/items/equipped/grandsoulshield.jpg' alt='grandsoulshield' />
+      </Row>
+      <Row>
         <img src='/images/items/equipped/dragonshield.jpg' alt='dragonshield' />
+        <ItemPlaceholder />
+        <ItemPlaceholder />
+        <ItemPlaceholder />
       </Row>
     </Wrapper>
   )
