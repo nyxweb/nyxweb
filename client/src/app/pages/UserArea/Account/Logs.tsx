@@ -19,19 +19,22 @@ interface LogFilters {
   search: string
   type: string | null
   ip: string | null
+  limit: number | null
 }
 
 export const Logs = () => {
-  const [filters, setFilters] = useState<LogFilters>({ search: '', type: null, ip: null })
-  const [logs, loading] = useRequest<IAccountLog[]>('/users/logs')
+  const [filters, setFilters] = useState<LogFilters>({ search: '', type: null, ip: null, limit: 50 })
+  const [logs, loading] = useRequest<IAccountLog[]>('/users/account/logs')
 
   const applyFilters = (logs: IAccountLog[]) => {
-    return logs.filter(
-      (log) =>
-        (filters.search.length ? new RegExp(filters.search, 'i').test(log.log_message) : true) &&
-        (filters.type ? log.type === filters.type : true) &&
-        (filters.ip ? log.ip === filters.ip : true),
-    )
+    return logs
+      .filter(
+        (log) =>
+          (filters.search.length ? new RegExp(filters.search, 'i').test(log.log_message) : true) &&
+          (filters.type ? log.type === filters.type : true) &&
+          (filters.ip ? log.ip === filters.ip : true),
+      )
+      .slice(0, filters.limit || 1000)
   }
 
   const filterValues = useMemo(() => {
@@ -78,6 +81,17 @@ export const Logs = () => {
             ))}
           </select>
         </SelectForm>
+        <SelectForm>
+          <select
+            onChange={(e) => setFilters((filters) => ({ ...filters, limit: Number(e.target.value) || null }))}
+            defaultValue={50}
+          >
+            <option value={0}>{'all logs'}</option>
+            <option value={20}>{20}</option>
+            <option value={50}>{50}</option>
+            <option value={100}>{100}</option>
+          </select>
+        </SelectForm>
       </Filters>
 
       <table>
@@ -107,10 +121,14 @@ export const Logs = () => {
                 <tr data-tip={MomentJS(log.date).format('YYYY-MM-DD HH:mm:ss')} data-for={id} key={id}>
                   <td>
                     <Moment fromNow>{log.date}</Moment>
-                    <ReactTooltip id={id} place='left' type='info' effect='solid' />
+                    <ReactTooltip id={id} place='top' type='info' effect='solid' />
                   </td>
                   <td style={{ textAlign: 'left' }}>{log.log_message}</td>
-                  <td>{log.ip}</td>
+                  <td>
+                    <a href={`https://whatismyipaddress.com/ip/${log.ip}`} target='_blank' rel='noreferrer'>
+                      {log.ip}
+                    </a>
+                  </td>
                 </tr>
               )
             })
@@ -124,7 +142,7 @@ export const Logs = () => {
 const Filters = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: space-between;
   margin-bottom: 15px;
 `
 

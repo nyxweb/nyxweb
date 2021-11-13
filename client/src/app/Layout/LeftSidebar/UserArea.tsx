@@ -79,7 +79,7 @@ const RESOURCES: Record<string, IResource> = {
 }
 
 interface Props {
-  count: number
+  count: number | string
   width?: number
   height?: number
   color?: string
@@ -120,33 +120,35 @@ export const UserArea = () => {
   return (
     <Wrapper>
       <Title>
-        <AccountName status={false}>{user.username}</AccountName>
+        <AccountName status={false}>{user.memb___id}</AccountName>
         <Button value='Logout' looks='green' onClick={() => dispatch(userLogout())} />
       </Title>
-      <Resources>
-        <Row>
-          <Resource count={user.chaos} res='chaos' />
-          <Resource count={user.bless} res='bless' />
-          <Resource count={user.soul} res='soul' />
-          <Resource count={user.life} res='life' />
-          <Resource count={user.creation} res='creation' />
-          <Resource count={user.rena} res='rena' />
-          <Resource count={user.stone} res='stone' />
-        </Row>
-        <Row>
-          <Resource count={user.boh} />
-          <Resource count={user.box1} />
-          <Resource count={user.box2} />
-          <Resource count={user.box3} />
-          <Resource count={user.box4} />
-          <Resource count={user.box5} />
-          <Resource count={user.heart} />
-        </Row>
-        <Row>
-          <Resource width={135} label='Zen' color='green' count={233443434334} />
-          <Resource width={100} label='Gold' color='orange' count={43332} />
-        </Row>
-      </Resources>
+      {user.resources && (
+        <Resources>
+          <Row>
+            <Resource count={user.resources.chaos} res='chaos' />
+            <Resource count={user.resources.bless} res='bless' />
+            <Resource count={user.resources.soul} res='soul' />
+            <Resource count={user.resources.life} res='life' />
+            <Resource count={user.resources.creation} res='creation' />
+            <Resource count={user.resources.rena} res='rena' />
+            <Resource count={user.resources.stone} res='stone' />
+          </Row>
+          <Row>
+            <Resource count={user.resources.boh} />
+            <Resource count={user.resources.box1} />
+            <Resource count={user.resources.box2} />
+            <Resource count={user.resources.box3} />
+            <Resource count={user.resources.box4} />
+            <Resource count={user.resources.box5} />
+            <Resource count={user.resources.heart} />
+          </Row>
+          <Row>
+            <Resource width={135} label='Zen' color='green' count={user.resources.zen} />
+            <Resource width={100} label='Gold' color='orange' count={user.resources.gold} />
+          </Row>
+        </Resources>
+      )}
       <Spacer />
       <UserMenu>
         <Link to='/account'>

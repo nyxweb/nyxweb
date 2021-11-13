@@ -1,14 +1,7 @@
-export interface User {
-  username: string
-  email: string
-  created_at: string
-  bloc_code: string
-  ctl1_code: string
-  is_vip: 0 | 1
-  vip_expiration: number
+export interface IResources {
   storage: string
-  zen: number
-  credits: number
+  zen: string
+  gold: string
   chaos: number
   bless: number
   soul: number
@@ -25,8 +18,19 @@ export interface User {
   heart: number
 }
 
+export interface IUser {
+  memb___id: string
+  mail_addr: string
+  appl_days: string
+  bloc_code: string
+  ctl1_code: string
+  IsVip: 0 | 1
+  VipExpirationTime: number
+  resources: IResources
+}
+
 export interface UserState {
-  user: User | null
+  user: IUser | null
   authorized: 'loading' | boolean
   loginStatus?: 'loading' | 'failed' | 'succeeded'
 }
