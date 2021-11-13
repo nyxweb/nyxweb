@@ -34,7 +34,7 @@ const Root = styled.div`
   min-width: 1280px;
   margin: 0 auto;
   background: url('/images/layout/lightning.gif') no-repeat top 170px center,
-    url('/images/layout/top-bg.png') no-repeat top center,
+    url('/images/layout/top-bg.jpg') no-repeat top center,
     url('/images/layout/bottom-bg.jpg') no-repeat bottom center;
   overflow-x: hidden;
 `

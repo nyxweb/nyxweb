@@ -47,10 +47,12 @@ export interface IMEMB_STAT {
   DisConnectTM: Date
 }
 
+export type ICharacterClass = 0 | 1 | 16 | 17 | 32 | 33 | 48 | 64
+
 export interface ICharacter {
   Name: string
   cLevel: number
-  Class: number
+  Class: ICharacterClass
   Inventory: string
   Money: number
   MapNumber: number
