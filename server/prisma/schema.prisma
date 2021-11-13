@@ -1,0 +1,804 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model account_character {
+  Number    Int        @default(autoincrement())
+  Id        String     @id(map: "PK_AccountCharacter") @db.VarChar(10)
+  GameID1   String?    @db.VarChar(10)
+  GameID2   String?    @db.VarChar(10)
+  GameID3   String?    @db.VarChar(10)
+  GameID4   String?    @db.VarChar(10)
+  GameID5   String?    @db.VarChar(10)
+  GameIDC   String?    @db.VarChar(10)
+  MoveCnt   Int?       @default(0, map: "DF__AccountCh__MoveC__7A3223E8") @db.TinyInt
+  character character?
+
+  @@map("AccountCharacter")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model Admin {
+  Id         String  @db.Char(10)
+  Pass       String? @db.Char(10)
+  AdminLevel Int?
+
+  @@ignore
+}
+
+model BLOCKING {
+  block_guid Int     @id(map: "PK_BLOCKING") @default(autoincrement())
+  memb_guid  Int
+  serv_guid  Int
+  char_name  String? @db.VarChar(20)
+  take_code  String  @db.Char(1)
+  take_cont  String  @db.VarChar(1000)
+  memb_cont  String? @db.VarChar(2000)
+  appl_days  String  @db.Char(8)
+  rels_days  String  @db.Char(8)
+  ctl1_code  String  @default("5", map: "DF_BLOCKING_ctl1_code") @db.Char(1)
+
+  @@index([char_name, take_code, appl_days, rels_days], map: "IX_BLOCKING")
+}
+
+model BLOCKING_LOG {
+  appl_days  DateTime @db.DateTime
+  admin_guid Int
+  block_guid Int
+  dist_code  String   @db.Char(2)
+  admin_name String   @db.VarChar(50)
+
+  @@id([appl_days, admin_guid, dist_code], map: "PK_BLOCKING_LOG")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model ChangeCharacter {
+  Col001 Int?
+  Col002 String? @db.VarChar(10)
+  Col003 String? @db.VarChar(10)
+  Col004 String? @db.VarChar(10)
+
+  @@ignore
+}
+
+model character {
+  AccountID         String    @unique @db.VarChar(10)
+  Name              String    @id(map: "PK_Character") @db.VarChar(10)
+  cLevel            Int?      @default(1, map: "DF_Character_cLevel")
+  LevelUpPoint      Int?      @default(0, map: "DF_Character_LevelUpPoint")
+  Class             Int?      @db.TinyInt
+  Experience        Int?      @default(0, map: "DF_Character_Experience")
+  Strength          Int?      @db.SmallInt
+  Dexterity         Int?      @db.SmallInt
+  Vitality          Int?      @db.SmallInt
+  Energy            Int?      @db.SmallInt
+  Inventory         Bytes?    @db.VarBinary(1080)
+  MagicList         Bytes?    @db.VarBinary(180)
+  Money             Int?      @default(0, map: "DF_Character_Money")
+  Life              Float?    @db.Real
+  MaxLife           Float?    @db.Real
+  Mana              Float?    @db.Real
+  MaxMana           Float?    @db.Real
+  MapNumber         Int?      @db.SmallInt
+  MapPosX           Int?      @db.SmallInt
+  MapPosY           Int?      @db.SmallInt
+  MapDir            Int?      @default(0, map: "DF_Character_MapDir") @db.TinyInt
+  PkCount           Int?      @default(0, map: "DF_Character_PkCount")
+  PkLevel           Int?      @default(3, map: "DF_Character_PkLevel")
+  PkTime            Int?      @default(0, map: "DF_Character_PkTime")
+  MDate             DateTime? @db.SmallDateTime
+  LDate             DateTime? @db.SmallDateTime
+  CtlCode           Int?      @default(0, map: "DF_Character_CtlCode") @db.TinyInt
+  DbVersion         Int?      @default(0, map: "DF__Character__DbVer__3A4CA8FD") @db.TinyInt
+  Quest             Bytes?    @default(dbgenerated("0"), map: "DF__Character__Quest__40F9A68C") @db.VarBinary(50)
+  Leadership        Int?      @default(0, map: "DF__Character__Leade__6FB49575") @db.SmallInt
+  ChatLimitTime     Int?      @default(0, map: "DF__Character__ChatL__70A8B9AE") @db.SmallInt
+  Resets            Int       @default(0, map: "DF_Character_Resets")
+  BanPost           Int       @default(0, map: "DF_Character_BlockPost")
+  IsMarried         Int       @default(0, map: "DF_Character_IsMarried")
+  MarryName         String?   @db.VarChar(11)
+  GrandResets       Int       @default(0, map: "DF__Character__Grand__3AA1AEB8")
+  QuestInProgress   Int       @default(0, map: "DF__Character__Quest__3B95D2F1")
+  QuestNumber       Int       @default(0, map: "DF__Character__Quest__3C89F72A")
+  QuestMonsters     Int       @default(0, map: "DF__Character__Quest__3D7E1B63")
+  SkyEventWins      Int       @default(0, map: "DF__Character__SkyEv__3E723F9C")
+  IsVip             Int       @default(0, map: "DF__Character__IsVip__3F6663D5")
+  VipExpirationTime Int       @default(0, map: "DF__Character__VipEx__405A880E")
+
+  member            guild_member?      @relation(fields: [Name], references: [Name])
+  memb_stat         memb_stat?         @relation(fields: [AccountID], references: [memb___id])
+  account_character account_character? @relation(map: "AccountCharacterPKEY", fields: [AccountID], references: [Id])
+
+  @@map("Character")
+}
+
+model CharPreview {
+  Name      String @id(map: "PK_CharPreview") @db.VarChar(10)
+  cLevel    Int?
+  Class     Int    @db.TinyInt
+  Inventory Bytes? @db.VarBinary(84)
+}
+
+model Day_Statistics {
+  ConnectTime DateTime @id(map: "PK_Day_Statistics") @db.DateTime
+  TotalCount  Int
+}
+
+model DefaultClassType {
+  Class        Int    @id(map: "PK_DefaultClassType") @db.TinyInt
+  Strength     Int?   @db.SmallInt
+  Dexterity    Int?   @db.SmallInt
+  Vitality     Int?   @db.SmallInt
+  Energy       Int?   @db.SmallInt
+  Inventory    Bytes? @db.VarBinary(1080)
+  MagicList    Bytes? @db.VarBinary(180)
+  Life         Float? @db.Real
+  MaxLife      Float? @db.Real
+  Mana         Float? @db.Real
+  MaxMana      Float? @db.Real
+  MapNumber    Int?   @db.SmallInt
+  MapPosX      Int?   @db.SmallInt
+  MapPosY      Int?   @db.SmallInt
+  Quest        Bytes? @db.VarBinary(50)
+  DbVersion    Int?   @db.TinyInt
+  Leadership   Int?   @default(0, map: "DF__DefaultCl__Leade__719CDDE7") @db.SmallInt
+  Level        Int?   @default(0, map: "DF__DefaultCl__Level__72910220") @db.SmallInt
+  LevelUpPoint Int?   @default(0, map: "DF__DefaultCl__Level__73852659") @db.SmallInt
+}
+
+model DT_Day_Statistics {
+  ConnectTime DateTime @db.DateTime
+  Type        Int      @db.TinyInt
+  TotalCount  Int
+
+  @@id([Type, ConnectTime], map: "PK_DT_Day_Statistics")
+}
+
+model DT_Week_Statistics {
+  Year     Int @db.SmallInt
+  Week     Int @db.TinyInt
+  WeekDay  Int @db.TinyInt
+  HalfDay  Int @db.TinyInt
+  Type     Int @db.TinyInt
+  MaxCount Int
+  MinCount Int
+  AvgCount Int
+
+  @@id([Type, Year, Week, WeekDay, HalfDay], map: "PK_DT_Week_Statistics")
+}
+
+model DT_WeekDay_Statistics {
+  Year     Int @db.SmallInt
+  Week     Int @db.TinyInt
+  WeekDay  Int @db.TinyInt
+  Type     Int @db.TinyInt
+  Hour     Int @db.TinyInt
+  MaxCount Int
+  MinCount Int
+  AvgCount Int
+
+  @@id([Type, Week, WeekDay, Hour, Year], map: "PK_DT_WeekDay_Statistics")
+}
+
+model DT_Year_Statistics {
+  Year     Int @db.SmallInt
+  Month    Int @db.TinyInt
+  Day      Int @db.TinyInt
+  Type     Int @db.TinyInt
+  MaxCount Int
+  MinCount Int
+  AvgCount Int
+
+  @@id([Type, Year, Month, Day], map: "PK_DT_Year_Statistics")
+}
+
+model EVENT_INFO {
+  Server        Int    @db.SmallInt
+  Square        Int    @db.TinyInt
+  AccountID     String @db.VarChar(10)
+  CharacterName String @db.VarChar(10)
+  Class         Int    @db.TinyInt
+  Point         Int
+
+  @@id([Server, Square, AccountID, CharacterName], map: "PK_EVENT_INFO")
+}
+
+model EVENT_INFO_BC {
+  Server        Int    @db.SmallInt
+  Bridge        Int    @db.TinyInt
+  AccountID     String @db.VarChar(10)
+  CharacterName String @db.VarChar(10)
+  Class         Int    @db.TinyInt
+  Point         Int
+  PlayCount     Int    @default(1, map: "DF_EVENT_INFO_BC_PlayCount")
+
+  @@id([Server, Bridge, AccountID, CharacterName], map: "PK_EVENT_INFO_BC")
+}
+
+model EVENT_INFO_BC_3RD {
+  Server        Int    @db.TinyInt
+  Bridge        Int    @db.TinyInt
+  AccountID     String @db.VarChar(10)
+  CharacterName String @db.VarChar(10)
+  Class         Int    @db.TinyInt
+  Point         Int
+  PlayCount     Int
+  SumLeftTime   Int    @default(0, map: "DF_EVENT_INFO_BC_3RD_SumLeftTime")
+
+  @@id([Server, Bridge, AccountID, CharacterName], map: "PK_EVENT_INFO_BC_3RD")
+}
+
+model EVENT_INFO_BC_4TH {
+  Server        Int    @db.TinyInt
+  Bridge        Int    @db.TinyInt
+  AccountID     String @db.VarChar(10)
+  CharacterName String @db.VarChar(10)
+  Class         Int    @db.TinyInt
+  Point         Int
+  PlayCount     Int
+  SumLeftTime   Int    @default(0, map: "DF_EVENT_INFO_BC_4TH_SumLeftTime")
+  MinLeftTime   Int    @default(0, map: "DF_EVENT_INFO_BC_4TH_MinLeftTime")
+
+  @@id([Server, Bridge, AccountID, CharacterName], map: "PK_EVENT_INFO_BC_4TH")
+}
+
+model EVENT_INFO_BC_5TH {
+  Server           Int      @db.TinyInt
+  Bridge           Int      @db.TinyInt
+  AccountID        String   @db.VarChar(10)
+  CharacterName    String   @db.VarChar(10)
+  Class            Int      @db.TinyInt
+  Point            Int
+  PlayCount        Int
+  SumLeftTime      Int      @default(0, map: "DF_EVENT_INFO_BC_5TH_SumLeftTime")
+  MinLeftTime      Int      @default(0, map: "DF_EVENT_INFO_BC_5TH_MinLeftTime")
+  RegDate          DateTime @db.SmallDateTime
+  AlivePartyCount  Int
+  MaxPointLeftTime Int      @default(0, map: "DF_EVENT_INFO_BC_5TH_MaxPointLeftTime")
+
+  @@id([Server, Bridge, AccountID, CharacterName, RegDate], map: "PK_EVENT_INFO_BC_5TH")
+  @@index([AlivePartyCount, MinLeftTime, RegDate, Server], map: "IX_EVENT_INFO_BC_5TH")
+}
+
+model GameServerInfo {
+  Number    Int  @id(map: "PK_GameServerInfo") @default(0, map: "DF_GameServerInfo_Number")
+  ItemCount Int
+  ZenCount  Int? @default(0, map: "DF_GameServerInfo_ZenCount")
+}
+
+model guild {
+  G_Name   String         @id(map: "PK_Guild") @db.VarChar(8)
+  G_Mark   Bytes?         @db.VarBinary(32)
+  G_Score  Int?           @default(0, map: "DF_Guild_G_Score")
+  G_Master String?        @db.VarChar(10)
+  G_Count  Int?
+  G_Notice String?        @db.VarChar(60)
+  Number   Int            @default(autoincrement())
+  G_Type   Int            @default(0, map: "DF__Guild__G_Type__7EF6D905")
+  G_Rival  Int            @default(0, map: "DF__Guild__G_Rival__7FEAFD3E")
+  G_Union  Int            @default(0, map: "DF__Guild__G_Union__00DF2177")
+  members  guild_member[]
+
+  @@index([G_Rival], map: "IDX_GUILD_G_RIVAL")
+  @@index([G_Union], map: "IDX_GUILD_G_UNION")
+  @@index([Number], map: "IDX_GUILD_NUMBER")
+  @@map("Guild")
+}
+
+model guild_member {
+  Name      String     @id(map: "PK_GuildMember") @db.VarChar(10)
+  G_Name    String     @db.VarChar(8)
+  G_Level   Int?       @db.TinyInt
+  G_Status  Int        @default(0, map: "DF__GuildMemb__G_Sta__01D345B0") @db.TinyInt
+  guild     guild      @relation(fields: [G_Name], references: [G_Name])
+  character character? @relation
+
+  @@index([G_Name], map: "IX_GuildMember")
+  @@map("GuildMember")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model MANG_INFO {
+  mang_guid Int       @default(autoincrement())
+  mang___id String    @db.VarChar(15)
+  mang__pwd String    @db.VarChar(34)
+  mang_name String    @db.VarChar(20)
+  auth_code Int
+  appl_day  DateTime? @db.SmallDateTime
+  bloc_code Int
+  perm      Int
+
+  @@ignore
+}
+
+model MEMB_CREDITS {
+  memb___id String @id(map: "PK_MEMB_CREDITS") @db.VarChar(10)
+  credits   Int    @default(0, map: "DF_MEMB_CREDITS_credits")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model MEMB_DETA {
+  memb_guid Int
+  desc_text String? @db.VarChar(5000)
+
+  @@ignore
+}
+
+model memb_info {
+  memb_guid         Int                @id(map: "PK_MEMB_INFO_1") @default(autoincrement())
+  memb___id         String             @unique @db.VarChar(10)
+  memb__pwd         String             @db.VarChar(16)
+  memb_name         String             @db.VarChar(10)
+  sno__numb         String             @db.Char(13)
+  post_code         String?            @db.Char(6)
+  addr_info         String?            @db.VarChar(50)
+  addr_deta         String?            @db.VarChar(50)
+  tel__numb         String?            @db.VarChar(20)
+  phon_numb         String?            @db.VarChar(15)
+  mail_addr         String?            @db.VarChar(50)
+  fpas_ques         String?            @db.VarChar(50)
+  fpas_answ         String?            @db.VarChar(50)
+  job__code         String?            @db.Char(2)
+  appl_days         DateTime?          @db.DateTime
+  modi_days         DateTime?          @db.DateTime
+  out__days         DateTime?          @db.DateTime
+  true_days         DateTime?          @db.DateTime
+  mail_chek         String?            @default("0", map: "DF_MEMB_INFO_mail_chek") @db.Char(1)
+  bloc_code         String             @db.Char(1)
+  ctl1_code         String             @db.Char(1)
+  IsVip             Int                @default(0, map: "DF__MEMB_INFO__IsVip__414EAC47")
+  VipExpirationTime Int                @default(0, map: "DF__MEMB_INFO__VipEx__4242D080")
+  resources         nyx_resources?     @relation(fields: [memb___id], references: [account])
+  memb_stat         memb_stat          @relation(map: "memb_info_stat", fields: [memb___id], references: [memb___id])
+  logs              nyx_account_logs[]
+
+  @@index([sno__numb, memb_name], map: "IX_MEMB_DETAIL")
+  @@index([memb___id], map: "IX_MEMB_INFO_1")
+  @@map("MEMB_INFO")
+}
+
+model memb_stat {
+  memb___id    String     @id(map: "PK_MEMB_STAT") @db.VarChar(10)
+  ConnectStat  Int?       @db.TinyInt
+  ServerName   String?    @db.VarChar(10)
+  IP           String?    @db.VarChar(15)
+  ConnectTM    DateTime?  @db.SmallDateTime
+  DisConnectTM DateTime?  @db.SmallDateTime
+  character    character?
+  memb_info    memb_info?
+
+  @@map("MEMB_STAT")
+}
+
+model MuCastle_DATA {
+  MAP_SVR_GROUP          Int      @id(map: "PK_MuCastle_DATA")
+  SIEGE_START_DATE       DateTime @db.DateTime
+  SIEGE_END_DATE         DateTime @db.DateTime
+  SIEGE_GUILDLIST_SETTED Boolean
+  SIEGE_ENDED            Boolean  @default(false, map: "DF_MuCastle_Data_SEIGE_ENDED")
+  CASTLE_OCCUPY          Boolean  @default(false, map: "DF_MuCastle_Data_CASTLE_OCCUPY")
+  OWNER_GUILD            String   @db.VarChar(8)
+  MONEY                  Float    @default(0, map: "DF_MuCastle_Data_MONEY") @db.Money
+  TAX_RATE_CHAOS         Int      @default(0, map: "DF_MuCastle_Data_TAX_RATE")
+  TAX_RATE_STORE         Int      @default(0, map: "DF_MuCastle_DATA_TAX_RATE_STORE")
+  TAX_HUNT_ZONE          Int      @default(0, map: "DF_MuCastle_DATA_TAX_HUNT_ZONE")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model MuCastle_MONEY_STATISTICS {
+  MAP_SVR_GROUP Int
+  LOG_DATE      DateTime @db.DateTime
+  MONEY_CHANGE  Float    @db.Money
+
+  @@index([MAP_SVR_GROUP], map: "IX_MuCastle_MONEY_STATISTICS")
+  @@index([MAP_SVR_GROUP, LOG_DATE], map: "IX_MuCastle_MONEY_STATISTICS_NC")
+  @@ignore
+}
+
+model MuCastle_NPC {
+  MAP_SVR_GROUP  Int
+  NPC_NUMBER     Int
+  NPC_INDEX      Int
+  NPC_DF_LEVEL   Int
+  NPC_RG_LEVEL   Int
+  NPC_MAXHP      Int
+  NPC_HP         Int
+  NPC_X          Int      @db.TinyInt
+  NPC_Y          Int      @db.TinyInt
+  NPC_DIR        Int      @db.TinyInt
+  NPC_CREATEDATE DateTime @db.DateTime
+
+  @@unique([MAP_SVR_GROUP, NPC_NUMBER, NPC_INDEX], map: "IX_NPC_SUBKEY")
+  @@index([MAP_SVR_GROUP], map: "IX_NPC_PK")
+}
+
+model MuCastle_REG_SIEGE {
+  MAP_SVR_GROUP   Int
+  REG_SIEGE_GUILD String @db.VarChar(8)
+  REG_MARKS       Int
+  IS_GIVEUP       Int    @db.TinyInt
+  SEQ_NUM         Int
+
+  @@unique([MAP_SVR_GROUP, REG_SIEGE_GUILD], map: "IX_ATTACK_GUILD_SUBKEY")
+  @@index([MAP_SVR_GROUP], map: "IX_ATTACK_GUILD_KEY")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model MuCastle_SIEGE_GUILDLIST {
+  MAP_SVR_GROUP  Int
+  GUILD_NAME     String  @db.VarChar(10)
+  GUILD_ID       Int
+  GUILD_INVOLVED Boolean
+
+  @@index([MAP_SVR_GROUP], map: "IX_MuCastle_SIEGE_GUILDLIST")
+  @@ignore
+}
+
+model nyx_account_logs {
+  id          Int       @id(map: "PK_nyx_account_logs") @default(autoincrement())
+  account     String    @db.VarChar(10)
+  type        String    @db.VarChar(50)
+  log_message String    @db.NVarChar(2000)
+  properties  String?   @db.Text
+  date        DateTime  @db.DateTime
+  ip          String    @db.VarChar(50)
+  memb_info   memb_info @relation(fields: [account], references: [memb___id])
+}
+
+model nyx_hof {
+  id            Int      @id(map: "PK_nyx_hof") @default(autoincrement())
+  account       String   @db.VarChar(10)
+  name          String   @db.VarChar(10)
+  reset         Int
+  level         Int
+  class         Int
+  date          DateTime @db.DateTime
+  rank          Int
+  admin_account String   @db.VarChar(10)
+}
+
+model nyx_resources {
+  account   String     @id(map: "PK_nyx_resources") @db.VarChar(10)
+  storage   String     @db.VarChar(7680)
+  zen       BigInt     @default(0, map: "DF_nyx_resources_zen")
+  gold      BigInt     @default(0, map: "DF_nyx_resources_credits")
+  chaos     Int        @default(0, map: "DF_nyx_resources_chaos")
+  bless     Int        @default(0, map: "DF_Table_1_chaos1")
+  soul      Int        @default(0, map: "DF_Table_1_chaos1_1")
+  life      Int        @default(0, map: "DF_Table_1_chaos1_2")
+  creation  Int        @default(0, map: "DF_Table_1_chaos1_3")
+  rena      Int        @default(0, map: "DF_Table_1_chaos1_4")
+  stone     Int        @default(0, map: "DF_Table_1_chaos1_5")
+  boh       Int        @default(0, map: "DF_Table_1_chaos2")
+  box1      Int        @default(0, map: "DF_Table_1_chaos1_6")
+  box2      Int        @default(0, map: "DF_Table_1_chaos1_7")
+  box3      Int        @default(0, map: "DF_Table_1_chaos1_8")
+  box4      Int        @default(0, map: "DF_Table_1_chaos1_9")
+  box5      Int        @default(0, map: "DF_Table_1_chaos1_10")
+  heart     Int        @default(0, map: "DF_Table_1_chaos1_11")
+  memb_info memb_info?
+}
+
+model OptionData {
+  Name       String @id(map: "PK_OptionData") @db.VarChar(10)
+  SkillKey   Bytes? @db.Binary(10)
+  GameOption Int?   @db.TinyInt
+  Qkey       Int?   @db.TinyInt
+  Wkey       Int?   @db.TinyInt
+  Ekey       Int?   @db.TinyInt
+  ChatWindow Int?   @default(255, map: "DF__OptionDat__ChatW__4A8310C6") @db.TinyInt
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model RM_AUTHDATA {
+  UID         String  @db.VarChar(10)
+  PASS        String  @db.VarChar(10)
+  UNAME       String? @db.NVarChar(16)
+  AuthCode    Int
+  CountryCode Int?    @db.TinyInt
+
+  @@ignore
+}
+
+model SameTimeConnectLog {
+  ConnectTime  DateTime @db.DateTime
+  Server       Int      @db.TinyInt
+  SubServer    Int      @db.TinyInt
+  ConnectCount Int
+
+  @@id([ConnectTime, SubServer, Server], map: "PK_ConnectLog")
+}
+
+model T_BC_PCROOM_PLAYCOUNT {
+  PCROOM_GUID Int
+  AccountID   String @db.VarChar(50)
+  PlayCount   Int    @default(1, map: "DF_T_BC_PCROOM_PLAYCOUNT_PlayCount")
+  Point       Int    @default(0, map: "DF_T_BC_PCROOM_PLAYCOUNT_Point")
+
+  @@id([PCROOM_GUID, AccountID], map: "PK_T_BC_PCROOM_PLAYCOUNT")
+}
+
+model T_BLOOD_CASTLE {
+  AccountID  String @id(map: "PK_T_BLOOD_CASTLE") @db.VarChar(10)
+  StoneCount Int    @default(0, map: "DF_T_BLOOD_CASTLE_StoneCount")
+  Check_Code Int    @default(0, map: "DF_T_BLOOD_CASTLE_Check_Code")
+}
+
+model T_BLOOD_PLAYCOUNT {
+  AccountId    String  @id(map: "PK_T_BLOOD_PLAYCOUNT") @db.VarChar(50)
+  PlayCount    Int
+  RecoverCheck Boolean
+}
+
+model T_CC_OFFLINE_GIFT {
+  Guid      Int       @id(map: "PK_T_CC_OFFLINE_GIFT") @default(autoincrement())
+  Server    Int?
+  AccountID String?   @db.VarChar(10)
+  CharName  String?   @db.VarChar(10)
+  GiftKind  Int
+  Date_Give DateTime  @db.SmallDateTime
+  Date_Reg  DateTime? @default(now(), map: "DF_T_CC_OFFLINE_GIFT_Date_Reg") @db.SmallDateTime
+  RegCheck  Int       @default(0, map: "DF_T_CC_OFFLINE_GIFT_RegCheck") @db.TinyInt
+
+  @@index([Date_Give], map: "IX_T_CC_OFFLINE_GIFT")
+  @@index([AccountID], map: "IX_T_CC_OFFLINE_GIFT_1")
+}
+
+model T_CC_OFFLINE_GIFTNAME {
+  GiftKind Int    @id(map: "PK_T_CC_OFFLINE_GIFTNAME")
+  GiftName String @db.VarChar(50)
+}
+
+model T_CGuid {
+  GUID Int    @id(map: "PK_T_CGuid") @default(autoincrement())
+  Name String @db.VarChar(10)
+
+  @@index([Name], map: "IX_T_CGuid_Name")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model T_CurCharName {
+  Name  String   @db.Char(10)
+  cDate DateTime @default(now(), map: "DF__T_CurChar__cDate__6BE40491") @db.SmallDateTime
+
+  @@ignore
+}
+
+model T_DL_OFFLINE_GIFT {
+  Guid      Int       @id(map: "PK_T_DL_OFFLINE_GIFT") @default(autoincrement())
+  Server    Int?
+  AccountID String?   @db.VarChar(10)
+  CharName  String?   @db.VarChar(10)
+  GiftKind  Int
+  Date_Give DateTime  @db.SmallDateTime
+  Date_Reg  DateTime? @default(now(), map: "DF_T_DL_OFFLINE_GIFT_Date_Reg") @db.SmallDateTime
+  RegCheck  Int       @default(0, map: "DF_T_DL_OFFLINE_GIFT_RegCheck") @db.TinyInt
+
+  @@index([Date_Give], map: "IX_T_DL_OFFLINE_GIFT")
+  @@index([AccountID], map: "IX_T_DL_OFFLINE_GIFT_1")
+}
+
+model T_DL_OFFLINE_GIFTNAME {
+  GiftKind Int    @id(map: "PK_T_DL_OFFLINE_GIFTNAME")
+  GiftName String @db.VarChar(50)
+}
+
+model T_ENTER_CHECK_BC {
+  AccountID       String   @db.VarChar(10)
+  CharName        String   @db.VarChar(10)
+  ServerCode      Int      @db.SmallInt
+  ToDayEnterCount Int      @default(0, map: "DF_T_ENTER_CHECK_DS_ToDayEnterCheck") @db.TinyInt
+  LastEnterDate   DateTime @default(now(), map: "DF_T_ENTER_CHECK_BC_LastEnterDate") @db.SmallDateTime
+
+  @@id([AccountID, CharName, ServerCode], map: "PK_T_ENTER_CHECK_DS")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model T_FriendList {
+  GUID       Int
+  FriendGuid Int?
+  FriendName String? @db.VarChar(10)
+  Del        Int?    @default(0, map: "DF_T_FriendList_Del") @db.TinyInt
+
+  @@index([GUID, FriendGuid], map: "IX_T_FriendList")
+  @@ignore
+}
+
+model T_FriendMail {
+  MemoIndex  Int      @default(10, map: "DF_T_FriendMemo_MemoIndex")
+  GUID       Int
+  FriendName String?  @db.VarChar(10)
+  wDate      DateTime @default(now(), map: "DF_T_FriendMemo_wDate") @db.SmallDateTime
+  Subject    String?  @db.VarChar(50)
+  bRead      Boolean  @default(false, map: "DF_T_FriendMemo_MemoRead")
+  Memo       Bytes?   @db.VarBinary(1000)
+  Photo      Bytes?   @db.Binary(13)
+  Dir        Int?     @default(0, map: "DF_T_FriendMemo_Dir") @db.TinyInt
+  Act        Int?     @default(0, map: "DF_T_FriendMemo_Action") @db.TinyInt
+
+  @@id([GUID, MemoIndex], map: "PK_T_FriendMemo")
+}
+
+model T_FriendMain {
+  GUID        Int    @id(map: "PK_T_FriendMain")
+  Name        String @db.VarChar(10)
+  FriendCount Int?   @db.TinyInt
+  MemoCount   Int?   @default(10, map: "DF_T_FriendMain_MemoCount")
+  MemoTotal   Int?   @default(0, map: "DF_T_FriendMain_MemoTotal")
+
+  @@index([Name], map: "IX_T_FriendMain")
+}
+
+model T_FRIENDSHIP_SERVERRANK {
+  ServerCode           Int @id(map: "PK_T_FRIENDSHIP_SERVERRANK") @db.SmallInt
+  FriendShipStoneCount Int @default(0, map: "DF_T_FRIENDSHIP_SERVERRANK_FriendShipStoneCount")
+}
+
+model T_FRIENDSHIP_STONE {
+  AccountID            String @db.VarChar(10)
+  ServerCode           Int    @db.SmallInt
+  CharName             String @db.VarChar(10)
+  FriendShipStoneCount Int    @default(0, map: "DF_T_T_FriendShipStoneCount")
+  Check_Code           Int    @default(0, map: "DF_T_T_Check_Code") @db.TinyInt
+
+  @@id([AccountID, ServerCode, CharName], map: "PK_T_T")
+}
+
+model T_MU2003_EVENT {
+  AccountID   String @id(map: "PK_T_MU2003_EVENT_1") @db.VarChar(50)
+  EventChips  Int    @default(0, map: "DF_T_MU2003_EVENT_EventChips_1") @db.SmallInt
+  MuttoIndex  Int    @default(-1, map: "DF_T_MU2003_EVENT_MuttoIndex_1")
+  MuttoNumber Int    @default(0, map: "DF_T_MU2003_EVENT_MuttoNumber_1")
+  Check_Code  String @default("0", map: "DF_T_MU2003_EVENT_Check_Code") @db.Char(1)
+}
+
+model T_PetItem_Info {
+  ItemSerial Int  @id(map: "PK_T_Pet_Info")
+  Pet_Level  Int? @default(0, map: "DF_T_Pet_Info_Pet_Level") @db.SmallInt
+  Pet_Exp    Int? @default(0, map: "DF_T_Pet_Info_Pet_Exp")
+}
+
+model T_RegCount_Check {
+  AccountID  String  @id(map: "PK_T_RegCount_Check") @db.VarChar(10)
+  RegCount   Int     @default(1, map: "DF_T_RegCount_Check_RegCount")
+  RegAlready Boolean @default(false, map: "DF_T_RegCount_Check_RegAlready")
+}
+
+model T_Register_Info {
+  F_Register_Section    Int    @id(map: "PK_T_Register_Info") @db.SmallInt
+  F_Register_Name       String @db.VarChar(50)
+  F_Register_TotalCount Int
+}
+
+model T_RingAttackEvent_Gift {
+  GUID         Int      @default(autoincrement())
+  AccountID    String   @db.VarChar(50)
+  GiftKind     Int      @db.TinyInt
+  RegisterDate DateTime @default(now(), map: "DF_T_RingAttackEvent_Gift_RegisterDate") @db.DateTime
+
+  @@id([GUID, GiftKind, RegisterDate], map: "PK_T_RingAttackEvent_Gift")
+  @@index([AccountID], map: "IX_T_RingAttackEvent_Gift")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model T_RingEvent_GiftName {
+  GiftKind Int    @db.TinyInt
+  GiftName String @db.VarChar(50)
+
+  @@ignore
+}
+
+model T_RingEvent_OfflineGift {
+  GUID         Int       @default(autoincrement()) @db.SmallInt
+  AccountID    String?   @db.VarChar(10)
+  GiftSection  Int       @db.TinyInt
+  GiftKind     Int       @db.TinyInt
+  RegisterDate DateTime? @db.DateTime
+
+  @@id([GUID, GiftSection], map: "PK_T_RingEvent_OfflineGift")
+  @@index([AccountID], map: "IX_T_RingEvent_OfflineGift")
+}
+
+model T_Serial_Bank {
+  F_Serial_Guid      Int       @default(autoincrement())
+  P_Serial_1         String    @db.Char(4)
+  P_Serial_2         String    @db.Char(4)
+  P_Serial_3         String    @db.Char(4)
+  F_Serial_Section   Int       @db.SmallInt
+  F_Member_Guid      Int?
+  F_Member_Id        String?   @db.Char(10)
+  F_Register_Section Int?      @db.SmallInt
+  F_Register_Date    DateTime? @db.SmallDateTime
+  F_Create_Date      DateTime  @default(now(), map: "DF_T_Serial_Bank_F_Create_Date") @db.SmallDateTime
+  F_RegisterCheck    Boolean   @default(false, map: "DF_T_Serial_Bank_F_RegisterCheck")
+
+  @@id([P_Serial_1, P_Serial_2, P_Serial_3], map: "PK_T_Serial_Bank")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model T_WaitFriend {
+  GUID       Int
+  FriendGuid Int
+  FriendName String @db.VarChar(10)
+
+  @@index([GUID], map: "IX_T_WaitFriend")
+  @@ignore
+}
+
+model TimeConnectLog_ {
+  ConnectTime  DateTime @db.DateTime
+  Server       Int      @db.TinyInt
+  SubServer    Int      @db.TinyInt
+  ConnectCount Int
+
+  @@id([Server, ConnectTime, SubServer], map: "PK_TimeConnectLog ")
+  @@map("TimeConnectLog ")
+}
+
+model warehouse {
+  AccountID  String    @id(map: "PK_warehouse") @db.VarChar(10)
+  Items      Bytes?    @db.VarBinary(1200)
+  Money      Int?      @default(0, map: "DF_warehouse_Money")
+  EndUseDate DateTime? @db.SmallDateTime
+  DbVersion  Int?      @default(0, map: "DF__warehouse__DbVer__3B40CD36") @db.TinyInt
+  pw         Int?      @default(0, map: "DF__warehouse__pw__40058253") @db.SmallInt
+  MultiVault Int       @default(1, map: "DF_warehouse_WHInUse")
+  Items01    Bytes?    @db.VarBinary(1200)
+  Items02    Bytes?    @db.VarBinary(1200)
+  Items03    Bytes?    @db.VarBinary(1200)
+  Items04    Bytes?    @db.VarBinary(1200)
+  Items05    Bytes?    @db.VarBinary(1200)
+  Items06    Bytes?    @db.VarBinary(1200)
+  Items07    Bytes?    @db.VarBinary(1200)
+  Items08    Bytes?    @db.VarBinary(1200)
+  Items09    Bytes?    @db.VarBinary(1200)
+  Items10    Bytes?    @db.VarBinary(1200)
+}
+
+model Week_Statistics {
+  Year     Int @db.SmallInt
+  Week     Int @db.TinyInt
+  WeekDay  Int @db.TinyInt
+  HalfDay  Int @db.TinyInt
+  MaxCount Int
+  MinCount Int
+  AvgCount Int
+
+  @@id([Year, Week, WeekDay, HalfDay], map: "PK_Week_Statistics")
+}
+
+model WeekDay_Statistics {
+  Year     Int @db.SmallInt
+  Week     Int @db.TinyInt
+  WeekDay  Int @db.TinyInt
+  Hour     Int @db.TinyInt
+  MaxCount Int
+  MinCount Int
+  AvgCount Int
+
+  @@id([Week, WeekDay, Hour, Year], map: "PK_WeekDay_Statistics")
+}
+
+model Year_Statistics {
+  Year     Int @db.SmallInt
+  Month    Int @db.TinyInt
+  Day      Int @db.TinyInt
+  MaxCount Int
+  MinCount Int
+  AvgCount Int
+
+  @@id([Year, Month, Day], map: "PK_Year_Statistics")
+}
+
+model ZenEvent {
+  Guid      Int    @default(autoincrement())
+  AccountID String @db.VarChar(10)
+  Zen       Int?   @default(0, map: "DF_ZenEvent_Zen")
+
+  @@id([Guid, AccountID], map: "PK_ZenEvent")
+}

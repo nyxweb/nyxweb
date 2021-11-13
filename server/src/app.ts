@@ -24,7 +24,7 @@ app.use(express.json({ type: 'application/json', limit: '1kb' }))
 app.use(cookieParser())
 app.use(rateLimit({ windowMs: 1000, max: 10 }))
 
-app.get('/api/health', async (_req, res) => res.end('ok'))
+app.get(['/health', '/api/health'], (_req, res) => res.json({ status: 'ok' }))
 app.use('/api', router)
 app.use(errorHandler)
 

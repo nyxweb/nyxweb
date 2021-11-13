@@ -1,6 +1,62 @@
 import { RequestHandler } from 'express'
-import { getRepository } from 'typeorm'
-import { Character, nyx_hof } from 'db/entity'
+import { prisma } from 'db'
+
+export const getCharacterQuery = {
+  select: {
+    Name: true,
+    Resets: true,
+    cLevel: true,
+    Class: true,
+    Strength: true,
+    Dexterity: true,
+    Vitality: true,
+    Energy: true,
+    Leadership: true,
+    LevelUpPoint: true,
+    Inventory: true,
+    Money: true,
+    MapNumber: true,
+    PkCount: true,
+    CtlCode: true,
+    ChatLimitTime: true,
+    BanPost: true,
+    IsMarried: true,
+    MarryName: true,
+    QuestInProgress: true,
+    QuestNumber: true,
+    QuestMonsters: true,
+    SkyEventWins: true,
+    IsVip: true,
+    VipExpirationTime: true,
+    member: {
+      select: {
+        G_Name: true,
+        G_Status: true,
+        guild: {
+          select: {
+            G_Mark: true,
+            G_Score: true,
+            G_Rival: true,
+            G_Master: true,
+            G_Union: true,
+          },
+        },
+      },
+    },
+    memb_stat: {
+      select: {
+        ConnectStat: true,
+        ConnectTM: true,
+        DisConnectTM: true,
+      },
+    },
+    account_character: {
+      select: {
+        GameIDC: true,
+      },
+    },
+  },
+}
 
 export const getOne: RequestHandler = async (req, res, next) => {
   try {
@@ -8,46 +64,10 @@ export const getOne: RequestHandler = async (req, res, next) => {
 
     if (!name?.length || name.length > 10) return res.status(404).json({ error: 'Character not found' })
 
-    const character = await getRepository(Character)
-      .createQueryBuilder('char')
-      .select([
-        'char.Name',
-        'char.Resets',
-        'char.cLevel',
-        'char.Class',
-        'char.Strength',
-        'char.Dexterity',
-        'char.Vitality',
-        'char.Energy',
-        'char.Leadership',
-        'char.LevelUpPoint',
-        'char.Inventory',
-        'char.Money',
-        'char.MapNumber',
-        'char.PkCount',
-        'char.CtlCode',
-        'char.ChatLimitTime',
-        'char.BanPost',
-        'char.IsMarried',
-        'char.MarryName',
-        'char.QuestInProgress',
-        'char.QuestNumber',
-        'char.QuestMonsters',
-        'char.SkyEventWins',
-        'char.IsVip',
-        'char.VipExpirationTime',
-        'member.G_Name',
-        'member.G_Status',
-        'guild.G_Mark',
-        'guild.G_Score',
-        'guild.G_Master',
-        'guild.G_Rival',
-        'guild.G_Union',
-      ])
-      .leftJoin('char.member', 'member')
-      .leftJoin('member.guild', 'guild')
-      .where('char.Name = :name', { name })
-      .getOne()
+    const character = await prisma.character.findFirst({
+      ...getCharacterQuery,
+      where: { Name: name },
+    })
 
     if (!character) return res.status(404).json({ error: 'Character not found' })
 
@@ -58,15 +78,16 @@ export const getOne: RequestHandler = async (req, res, next) => {
         ...char.member,
         guild: {
           ...char.member.guild,
-          G_Mark: char.member.guild.G_Mark.toString('hex') as any,
+          G_Mark: char.member.guild.G_Mark?.toString('hex') as any,
         },
       }
     }
 
     res.json({
       ...char,
-      Inventory: char.Inventory?.toString('hex').substr(0, 240) ?? null,
-      total_stats: Strength + Dexterity + Vitality + Energy + Leadership + LevelUpPoint,
+      Inventory: char.Inventory?.toString('hex').substring(0, 240),
+      total_stats: Strength! + Dexterity! + Vitality! + Energy! + Leadership! + LevelUpPoint!,
+      is_online: char.account_character?.GameIDC === char.Name && char.memb_stat?.ConnectStat === 1,
     })
   } catch (error) {
     next(error)
@@ -76,55 +97,13 @@ export const getOne: RequestHandler = async (req, res, next) => {
 export const getMany: RequestHandler = async (req, res, next) => {
   try {
     const { top } = req.query
-    const limit = isNaN(Number(top)) || Number(top) < 1 ? undefined : Number(top)
+    const take = isNaN(Number(top)) || Number(top) < 1 ? undefined : Number(top)
 
-    const characters = await getRepository(Character)
-      .createQueryBuilder('char')
-      .select([
-        'char.Name',
-        'char.Resets',
-        'char.cLevel',
-        'char.Class',
-        'char.Strength',
-        'char.Dexterity',
-        'char.Vitality',
-        'char.Energy',
-        'char.Leadership',
-        'char.LevelUpPoint',
-        'char.Inventory',
-        'char.Money',
-        'char.MapNumber',
-        'char.PkCount',
-        'char.CtlCode',
-        'char.ChatLimitTime',
-        'char.BanPost',
-        'char.IsMarried',
-        'char.MarryName',
-        'char.QuestInProgress',
-        'char.QuestNumber',
-        'char.QuestMonsters',
-        'char.SkyEventWins',
-        'char.IsVip',
-        'char.VipExpirationTime',
-        'member.G_Name',
-        'member.G_Status',
-        'guild.G_Mark',
-        'guild.G_Score',
-        'guild.G_Master',
-        'guild.G_Rival',
-        'guild.G_Union',
-        // 'account_character.GameIDC',
-        'memb_stat.ConnectStat',
-        'memb_stat.ConnectTM',
-        'memb_stat.DisConnectTM',
-      ])
-      .leftJoin('char.member', 'member')
-      .leftJoin('member.guild', 'guild')
-      // .leftJoin('char.account_character', 'account_character')
-      .leftJoin('char.memb_stat', 'memb_stat')
-      .limit(limit)
-      .orderBy({ 'char.Resets': 'DESC', 'char.cLevel': 'DESC', 'char.Name': 'ASC' })
-      .getMany()
+    const characters = await prisma.character.findMany({
+      ...getCharacterQuery,
+      orderBy: [{ Resets: 'desc' }, { cLevel: 'desc' }, { Name: 'asc' }],
+      take,
+    })
 
     res.json(
       characters.map(({ Strength, Dexterity, Vitality, Energy, Leadership, LevelUpPoint, ...char }) => {
@@ -133,15 +112,16 @@ export const getMany: RequestHandler = async (req, res, next) => {
             ...char.member,
             guild: {
               ...char.member.guild,
-              G_Mark: char.member.guild.G_Mark.toString('hex') as any,
+              G_Mark: char.member.guild.G_Mark?.toString('hex') as any,
             },
           }
         }
 
         return {
           ...char,
-          Inventory: char.Inventory.toString('hex').substr(0, 240),
-          total_stats: Strength + Dexterity + Vitality + Energy + Leadership + LevelUpPoint,
+          Inventory: char.Inventory?.toString('hex').substring(0, 240),
+          total_stats: Strength! + Dexterity! + Vitality! + Energy! + Leadership! + LevelUpPoint!,
+          is_online: char.account_character?.GameIDC === char.Name && char.memb_stat?.ConnectStat === 1,
         }
       }),
     )
@@ -152,13 +132,19 @@ export const getMany: RequestHandler = async (req, res, next) => {
 
 export const getHOF: RequestHandler = async (_req, res, next) => {
   try {
-    const characters = await getRepository(nyx_hof)
-      .createQueryBuilder()
-      .select(['name', 'reset', 'level', 'class', 'date', 'rank'])
-      .where({ rank: 1 })
-      .orderBy({ date: 'DESC', class: 'ASC' })
-      .limit(5)
-      .getRawMany()
+    const characters = await prisma.nyx_hof.findMany({
+      select: {
+        name: true,
+        reset: true,
+        level: true,
+        class: true,
+        date: true,
+        rank: true,
+      },
+      where: { rank: 1 },
+      orderBy: [{ date: 'desc' }, { class: 'asc' }],
+      take: 5,
+    })
 
     res.json(characters)
   } catch (error) {

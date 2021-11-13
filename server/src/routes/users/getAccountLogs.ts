@@ -1,15 +1,18 @@
-import { nyx_account_logs } from 'db/entity'
 import { Request, RequestHandler } from 'express'
-import { getRepository } from 'typeorm'
+import { prisma } from 'db'
 
 export const getAccountLogs: RequestHandler = async (req: Request, res, next) => {
   try {
-    const logs = await getRepository(nyx_account_logs)
-      .createQueryBuilder()
-      .where({ account: req.user!.memb___id })
-      .select(['date', 'ip', 'log_message', 'type'])
-      .orderBy({ date: 'DESC' })
-      .getRawMany()
+    const logs = await prisma.nyx_account_logs.findMany({
+      select: {
+        date: true,
+        ip: true,
+        log_message: true,
+        type: true,
+      },
+      where: { account: req.user!.memb___id },
+      orderBy: [{ date: 'desc' }],
+    })
 
     res.json(logs)
   } catch (error) {

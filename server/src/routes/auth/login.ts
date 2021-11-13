@@ -1,9 +1,7 @@
 import { RequestHandler } from 'express'
-import { getConnection, getRepository } from 'typeorm'
+import { prisma } from 'db'
 import validator from 'validator'
 import jwt from 'jsonwebtoken'
-
-import { MEMB_INFO, nyx_account_logs, nyx_resources } from 'db/entity'
 
 export const login: RequestHandler = async (req, res, next) => {
   try {
@@ -17,30 +15,33 @@ export const login: RequestHandler = async (req, res, next) => {
       return res.status(400).json({ error: 'Wrong Username or Password.' })
     }
 
-    const user = await getRepository(MEMB_INFO).findOne(
-      { memb___id: username, memb__pwd: password },
-      {
-        select: [
-          'memb___id',
-          'mail_addr',
-          'appl_days',
-          'bloc_code',
-          'ctl1_code',
-          'IsVip',
-          'VipExpirationTime',
-          'resources',
-        ],
-        relations: ['resources'],
+    const user = await prisma.memb_info.findFirst({
+      select: {
+        memb___id: true,
+        appl_days: true,
+        bloc_code: true,
+        ctl1_code: true,
+        IsVip: true,
+        VipExpirationTime: true,
+        resources: true,
+        memb_stat: {
+          select: {
+            ConnectStat: true,
+            ConnectTM: true,
+            DisConnectTM: true,
+            IP: true,
+          },
+        },
       },
-    )
+      where: { memb___id: username },
+    })
 
     if (!user) return res.status(400).json({ error: 'Wrong Username or Password.' })
 
     if (!user.resources) {
-      const resources = new nyx_resources()
-      resources.account = user.memb___id
-      user.resources = resources
-      await getConnection().manager.save(resources)
+      user.resources = await prisma.nyx_resources.create({
+        data: { account: user.memb___id, storage: '' },
+      })
     }
 
     const { resources, ...payload } = user
@@ -48,12 +49,14 @@ export const login: RequestHandler = async (req, res, next) => {
       expiresIn: '7d',
     })
 
-    await getRepository(nyx_account_logs).insert({
-      account: user.memb___id,
-      date: new Date(),
-      ip: req.ip,
-      type: 'website-login',
-      log_message: `Website login`,
+    await prisma.nyx_account_logs.create({
+      data: {
+        account: user.memb___id,
+        date: new Date(),
+        ip: req.ip,
+        type: 'website-login',
+        log_message: `Website login`,
+      },
     })
 
     res

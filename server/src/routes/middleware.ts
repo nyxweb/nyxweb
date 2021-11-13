@@ -1,20 +1,26 @@
 import { Request, RequestHandler } from 'express'
 import { verify } from 'jsonwebtoken'
-
-import { getRepository } from 'typeorm'
-import { MEMB_INFO } from 'db/entity'
+import { prisma } from 'db'
 
 export const auth: RequestHandler = async (req: Request, res, next) => {
   try {
     const { nyx_auth } = req.cookies
-    const payload = verify(nyx_auth, process.env.JWT_SECRET!)
+    const { memb___id } = verify(nyx_auth, process.env.JWT_SECRET!)
 
-    if (!payload) return res.status(401).json({ error: 'Not authorized' })
+    if (!memb___id) return res.status(401).json({ error: 'Not authorized' })
 
-    const user = await getRepository(MEMB_INFO).findOne(
-      { memb___id: payload.memb___id, mail_addr: payload.mail_addr },
-      { select: ['memb___id', 'mail_addr', 'appl_days', 'bloc_code', 'ctl1_code', 'IsVip', 'VipExpirationTime'] },
-    )
+    const user = await prisma.memb_info.findFirst({
+      select: {
+        memb___id: true,
+        mail_addr: true,
+        appl_days: true,
+        bloc_code: true,
+        ctl1_code: true,
+        IsVip: true,
+        VipExpirationTime: true,
+      },
+      where: { memb___id },
+    })
 
     if (!user) return res.status(401).json({ error: 'Not authorized' })
 

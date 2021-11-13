@@ -1,23 +1,42 @@
 import { RequestHandler } from 'express'
+import { prisma } from 'db'
 import validator from 'validator'
 import jwt from 'jsonwebtoken'
 
-export const verify: RequestHandler = (req, res) => {
+export const verify: RequestHandler = async (req, res) => {
   const token = req.cookies.nyx_auth
 
   try {
     if (!token || !validator.isJWT(token)) throw new Error('Not authorized')
 
-    const payload = jwt.verify(token, process.env.JWT_SECRET!)
+    const { memb___id } = jwt.verify(token, process.env.JWT_SECRET!)
+
+    const user = await prisma.memb_info.findFirst({
+      select: {
+        memb___id: true,
+        appl_days: true,
+        bloc_code: true,
+        ctl1_code: true,
+        IsVip: true,
+        VipExpirationTime: true,
+        resources: true,
+        memb_stat: {
+          select: {
+            ConnectStat: true,
+            ConnectTM: true,
+            DisConnectTM: true,
+            IP: true,
+          },
+        },
+      },
+      where: { memb___id },
+    })
+
+    if (!user) return res.status(401).json({ error: 'Not authorized' })
+
+    const { resources, ...payload } = user
 
     // Renew JWT so the user stays logged in
-    delete payload.exp
-    delete payload.aud
-    delete payload.iat
-    delete payload.iss
-    delete payload.jti
-    delete payload.nbf
-    delete payload.sub
     const freshToken = jwt.sign(payload, process.env.JWT_SECRET!, {
       expiresIn: '7d',
     })
@@ -29,7 +48,7 @@ export const verify: RequestHandler = (req, res) => {
         sameSite: 'strict',
         secure: process.env.ENV !== 'dev',
       })
-      .json(payload)
+      .json(user)
   } catch (error) {
     res.status(401).json({ error: 'Not authorized' })
   }
