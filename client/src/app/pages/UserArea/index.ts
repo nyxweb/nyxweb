@@ -1,2 +1,3 @@
-export * from './Character'
+export * from './Chats'
 export * from './Account'
+export * from './Character'

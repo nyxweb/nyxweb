@@ -20,6 +20,7 @@ export const verify: RequestHandler = async (req, res) => {
         IsVip: true,
         VipExpirationTime: true,
         resources: true,
+        main_character: true,
         memb_stat: {
           select: {
             ConnectStat: true,
@@ -33,6 +34,23 @@ export const verify: RequestHandler = async (req, res) => {
     })
 
     if (!user) return res.status(401).json({ error: 'Not authorized' })
+
+    // Auto set main character
+    if (!user.main_character) {
+      const character = await prisma.character.findFirst({
+        where: { AccountID: user.memb___id, cLevel: { gte: 50 } },
+        orderBy: [{ cLevel: 'desc' }],
+      })
+
+      if (character) {
+        user.main_character = character.Name
+
+        await prisma.memb_info.update({
+          data: { main_character: character.Name },
+          where: { memb___id: user.memb___id },
+        })
+      }
+    }
 
     // Renew JWT so the user stays logged in
     const freshToken = jwt.sign({ account: user.memb___id }, process.env.JWT_SECRET!, {

@@ -9,6 +9,7 @@ export interface IUser {
   ctl1_code: string
   IsVip: number
   VipExpirationTime: number
+  main_character: string | null
 }
 
 declare module 'express' {

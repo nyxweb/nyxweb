@@ -24,6 +24,7 @@ export const login: RequestHandler = async (req, res, next) => {
         IsVip: true,
         VipExpirationTime: true,
         resources: true,
+        main_character: true,
         memb_stat: {
           select: {
             ConnectStat: true,
@@ -42,6 +43,23 @@ export const login: RequestHandler = async (req, res, next) => {
       user.resources = await prisma.nyx_resources.create({
         data: { account: user.memb___id, storage: '' },
       })
+    }
+
+    // Auto set main character
+    if (!user.main_character) {
+      const character = await prisma.character.findFirst({
+        where: { AccountID: user.memb___id, cLevel: { gte: 50 } },
+        orderBy: [{ cLevel: 'desc' }],
+      })
+
+      if (character) {
+        user.main_character = character.Name
+
+        await prisma.memb_info.update({
+          data: { main_character: character.Name },
+          where: { memb___id: user.memb___id },
+        })
+      }
     }
 
     const token = jwt.sign({ account: user.memb___id }, process.env.JWT_SECRET!, {

@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
-import { ICharacter, IHOFCharacter, IGuild } from './typings'
+import { ICharacter, IHOFCharacter, IGuild } from 'typings'
 
 export const getHOF = createAsyncThunk('ranking/hof', async () => {
   const { data } = await axios.get<IHOFCharacter[]>('/characters/hof')

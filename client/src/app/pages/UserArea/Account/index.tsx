@@ -6,6 +6,7 @@ import { PrivateRoute } from 'app/routes/PrivateRoute'
 import { MainContentBlock, ReactLoader } from 'app/components'
 import { useRequest } from 'hooks'
 
+import { GetGold } from './GetGold'
 import { Logs } from './Logs'
 import { ChangePassword } from './ChangePassword'
 
@@ -63,7 +64,7 @@ export const Account = () => {
                 <td>
                   {loading ? (
                     <ReactLoader size={17} />
-                  ) : info?.memb_stat.ConnectTM ? (
+                  ) : info?.memb_stat?.ConnectTM ? (
                     <Moment fromNow withTitle>
                       {info.memb_stat.ConnectTM}
                     </Moment>
@@ -81,7 +82,7 @@ export const Account = () => {
                 <td>
                   {loading ? (
                     <ReactLoader size={17} />
-                  ) : info?.memb_stat.IP ? (
+                  ) : info?.memb_stat?.IP ? (
                     <a href={`https://whatismyipaddress.com/ip/${info.memb_stat.IP}`} target='_blank' rel='noreferrer'>
                       {info.memb_stat.IP}
                     </a>
@@ -166,6 +167,7 @@ export const Account = () => {
 
       <MainContentBlock padding={0}>
         <UserSubMenu>
+          <SubLink to='/account/get-gold'>Get Gold</SubLink>
           <SubLink to='/account/password'>Change Password</SubLink>
           <SubLink to='/account/logs'>Account Logs</SubLink>
         </UserSubMenu>
@@ -173,7 +175,8 @@ export const Account = () => {
 
       <Switch>
         <PrivateRoute path='/account/password' component={ChangePassword} />
-        <PrivateRoute path='/account' component={Logs} />
+        <PrivateRoute path='/account/logs' component={Logs} />
+        <PrivateRoute path='/account' component={GetGold} />
       </Switch>
     </Wrapper>
   )

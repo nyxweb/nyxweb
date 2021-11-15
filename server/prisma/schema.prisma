@@ -353,8 +353,9 @@ model memb_info {
   ctl1_code         String             @db.Char(1)
   IsVip             Int                @default(0, map: "DF__MEMB_INFO__IsVip__414EAC47")
   VipExpirationTime Int                @default(0, map: "DF__MEMB_INFO__VipEx__4242D080")
+  main_character    String?            @db.VarChar(10)
   resources         nyx_resources?     @relation(fields: [memb___id], references: [account])
-  memb_stat         memb_stat          @relation(map: "memb_info_stat", fields: [memb___id], references: [memb___id])
+  memb_stat         memb_stat?         @relation(map: "memb_info_stat", fields: [memb___id], references: [memb___id])
   logs              nyx_account_logs[]
 
   @@index([sno__numb, memb_name], map: "IX_MEMB_DETAIL")
@@ -598,15 +599,14 @@ model T_ENTER_CHECK_BC {
   @@id([AccountID, CharName, ServerCode], map: "PK_T_ENTER_CHECK_DS")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model T_FriendList {
+  id         Int     @id(map: "PK_T_FriendList") @default(autoincrement()) @map("_id")
   GUID       Int
   FriendGuid Int?
   FriendName String? @db.VarChar(10)
   Del        Int?    @default(0, map: "DF_T_FriendList_Del") @db.TinyInt
 
   @@index([GUID, FriendGuid], map: "IX_T_FriendList")
-  @@ignore
 }
 
 model T_FriendMail {
@@ -801,4 +801,22 @@ model ZenEvent {
   Zen       Int?   @default(0, map: "DF_ZenEvent_Zen")
 
   @@id([Guid, AccountID], map: "PK_ZenEvent")
+}
+
+model nyx_chat_dms {
+  id       Int      @id(map: "PK_nyx_chats") @default(autoincrement())
+  author   String   @db.VarChar(10)
+  receiver String   @db.VarChar(10)
+  message  String   @db.Text
+  date     DateTime @db.DateTime
+  seen     Int
+}
+
+model nyx_chat_global {
+  id      Int      @id(map: "PK_nyx_chat_global") @default(autoincrement())
+  author  String   @db.VarChar(10)
+  message String   @db.Text
+  date    DateTime @db.DateTime
+
+  @@index([author], map: "IX_nyx_chat_global")
 }

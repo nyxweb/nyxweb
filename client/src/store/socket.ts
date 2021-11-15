@@ -11,11 +11,11 @@ export const socketSlice = createSlice({
   name: 'socket',
   initialState,
   reducers: {
-    socketTest() {
-      SocketIO.emit('test line', 'wtf message :]')
+    socketChatEmitGlobal(_state, { payload }) {
+      SocketIO.emit('chat global message', payload)
     },
   },
 })
 
-export const { socketTest } = socketSlice.actions
+export const { socketChatEmitGlobal } = socketSlice.actions
 export default socketSlice.reducer

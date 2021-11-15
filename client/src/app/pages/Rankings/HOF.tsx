@@ -3,9 +3,10 @@ import styled from 'styled-components'
 
 import { getClassInfo } from 'utils'
 import { MainContentBlock, Modal, ReactLoader } from 'app/components'
-import { IHOFCharacter, getHOF } from 'store/ranking'
+import { getHOF } from 'store/ranking'
 import { useAppDispatch, useAppSelector } from 'store'
 import { ModalCharacter } from 'app/components'
+import { IHOFCharacter } from 'typings'
 
 interface Props {
   char: IHOFCharacter

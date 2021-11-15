@@ -10,7 +10,6 @@ import { Routes } from 'app/routes'
 import { Loader } from 'app/components'
 import { useAppDispatch, useAppSelector } from 'store'
 import { userVerify } from 'store/user'
-import { socketTest } from 'store/socket'
 
 axios.defaults.withCredentials = true
 axios.defaults.baseURL = process.env.REACT_APP_API_URL
@@ -21,7 +20,6 @@ export const App = () => {
 
   useEffect(() => {
     dispatch(userVerify())
-    dispatch(socketTest())
   }, [dispatch])
 
   return (

@@ -1,33 +1,26 @@
+import { useEffect } from 'react'
 import { Link, Switch } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { PrivateRoute } from 'app/routes/PrivateRoute'
 import { MainContentBlock, ReactLoader } from 'app/components'
-import { useRequest } from 'hooks'
+import { getClassInfo } from 'utils'
+import { useAppDispatch, useAppSelector } from 'store'
+import { getCharacters } from 'store/user'
 
 import { StatsAdder } from './StatsAdder'
 import { ClearPK } from './ClearPK'
 import { ChangeName } from './ChangeName'
 import { ChangeClass } from './ChangeClass'
-import { ICharacterClass } from 'store/ranking'
-import { getClassInfo } from 'utils'
-
-export interface ICharacterPrivate {
-  Dexterity: number
-  Energy: number
-  Leadership: number
-  LevelUpPoint: number
-  Name: string
-  Class: ICharacterClass
-  Strength: number
-  Vitality: number
-  account_character: { GameIDC: string }
-  cLevel: number
-  is_online: boolean
-}
+import { MainCharacter } from './Main'
 
 export const Character = () => {
-  const [characters, loading] = useRequest<ICharacterPrivate[]>('/users/characters')
+  const characters = useAppSelector((state) => state.user.characters)
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    dispatch(getCharacters())
+  }, [dispatch])
 
   return (
     <Wrapper>
@@ -48,18 +41,18 @@ export const Character = () => {
             </tr>
           </thead>
           <tbody>
-            {loading ? (
+            {characters.loading ? (
               <tr>
-                <td colSpan={9}>
+                <td colSpan={10}>
                   <ReactLoader />
                 </td>
               </tr>
-            ) : !characters?.length ? (
+            ) : !characters.data || !characters.data.length ? (
               <tr>
-                <td>No characters found.</td>
+                <td colSpan={10}>No characters found.</td>
               </tr>
             ) : (
-              characters.map((char, index) => {
+              characters.data.map((char, index) => {
                 const classInfo = getClassInfo(char.Class)
 
                 return (
@@ -86,6 +79,7 @@ export const Character = () => {
 
       <MainContentBlock padding={0}>
         <UserSubMenu>
+          <SubLink to='/character/main'>Main Character</SubLink>
           <SubLink to='/character/stats'>Stats Adder</SubLink>
           <SubLink to='/character/clear'>Clear PK</SubLink>
           <SubLink to='/character/name'>Change Name</SubLink>
@@ -98,6 +92,7 @@ export const Character = () => {
         <PrivateRoute path='/character/clear' component={ClearPK} />
         <PrivateRoute path='/character/name' component={ChangeName} />
         <PrivateRoute path='/character/class' component={ChangeClass} />
+        <PrivateRoute path='/character' component={MainCharacter} />
       </Switch>
     </Wrapper>
   )

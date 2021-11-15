@@ -23,7 +23,7 @@ interface LogFilters {
 }
 
 export const Logs = () => {
-  const [filters, setFilters] = useState<LogFilters>({ search: '', type: null, ip: null, limit: 50 })
+  const [filters, setFilters] = useState<LogFilters>({ search: '', type: null, ip: null, limit: 20 })
   const [logs, loading] = useRequest<IAccountLog[]>('/users/account/logs')
 
   const applyFilters = (logs: IAccountLog[]) => {
@@ -49,16 +49,9 @@ export const Logs = () => {
   return (
     <MainContentBlock>
       <Filters>
-        <input
-          placeholder='Search log message'
-          onChange={(e) => setFilters((filters) => ({ ...filters, search: e.target.value }))}
-        />
+        <input placeholder='Search log message' onChange={(e) => setFilters((filters) => ({ ...filters, search: e.target.value }))} />
         <SelectForm>
-          <select
-            onChange={(e) =>
-              setFilters((filters) => ({ ...filters, type: e.target.value.length ? e.target.value : null }))
-            }
-          >
+          <select onChange={(e) => setFilters((filters) => ({ ...filters, type: e.target.value.length ? e.target.value : null }))}>
             <option value=''>any type</option>
             {filterValues?.types.map((type, index) => (
               <option value={type} key={type + index}>
@@ -68,11 +61,7 @@ export const Logs = () => {
           </select>
         </SelectForm>
         <SelectForm>
-          <select
-            onChange={(e) =>
-              setFilters((filters) => ({ ...filters, ip: e.target.value.length ? e.target.value : null }))
-            }
-          >
+          <select onChange={(e) => setFilters((filters) => ({ ...filters, ip: e.target.value.length ? e.target.value : null }))}>
             <option value=''>any ip</option>
             {filterValues?.ips.map((ip, index) => (
               <option value={ip} key={ip + index}>
@@ -82,10 +71,7 @@ export const Logs = () => {
           </select>
         </SelectForm>
         <SelectForm>
-          <select
-            onChange={(e) => setFilters((filters) => ({ ...filters, limit: Number(e.target.value) || null }))}
-            defaultValue={50}
-          >
+          <select onChange={(e) => setFilters((filters) => ({ ...filters, limit: Number(e.target.value) || null }))} defaultValue={20}>
             <option value={0}>{'all logs'}</option>
             <option value={20}>{20}</option>
             <option value={50}>{50}</option>

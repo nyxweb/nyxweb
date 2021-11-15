@@ -1,4 +1,4 @@
-import { IGuildMember } from 'store/ranking'
+import { IGuildMember } from 'typings'
 
 interface CharacterInfo {
   className: { short: string; long: string }

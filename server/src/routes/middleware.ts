@@ -18,6 +18,7 @@ export const auth: RequestHandler = async (req: Request, res, next) => {
         ctl1_code: true,
         IsVip: true,
         VipExpirationTime: true,
+        main_character: true,
       },
       where: { memb___id: account },
     })
@@ -30,5 +31,16 @@ export const auth: RequestHandler = async (req: Request, res, next) => {
     next()
   } catch (error) {
     res.status(401).json({ error: 'Not authorized' })
+  }
+}
+
+export const requireMainCharacter: RequestHandler = async (req: Request, res, next) => {
+  try {
+    if (!req.user?.main_character)
+      return res.status(400).json({ error: 'You must have a main character to use this function.' })
+
+    next()
+  } catch (error) {
+    next(error)
   }
 }

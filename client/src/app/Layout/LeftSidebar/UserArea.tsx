@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import ReactTooltip from 'react-tooltip'
 import { v4 as uuid } from 'uuid'
@@ -17,6 +17,7 @@ interface Props {
   group?: number
   id?: number
   level?: number
+  onClick?: () => void
 }
 
 const RES = resources as Record<
@@ -41,7 +42,7 @@ const RES = resources as Record<
   }
 >
 
-const Resource: React.FC<Props> = ({ count, width = 30, height = 30, color, label, group, id, level }) => {
+const Resource: React.FC<Props> = ({ count, width = 30, height = 30, color, label, group, id, level, onClick }) => {
   const tooltipId = uuid()
   const ress = group && id ? RES[group].items[id] : null
   const resName = label || !ress ? label : ress.levels && level ? ress.levels[level] || ress.name : ress.name
@@ -49,13 +50,7 @@ const Resource: React.FC<Props> = ({ count, width = 30, height = 30, color, labe
 
   return (
     <>
-      <ResourceWrapper
-        width={width}
-        height={height}
-        image={itemImage}
-        data-tip={`${resName}: ${count}`}
-        data-for={tooltipId}
-      >
+      <ResourceWrapper onClick={onClick} width={width} height={height} image={itemImage} data-tip={`${resName}: ${count}`} data-for={tooltipId}>
         {label ? (
           <>
             {label}
@@ -73,6 +68,7 @@ const Resource: React.FC<Props> = ({ count, width = 30, height = 30, color, labe
 export const UserArea = () => {
   const user = useAppSelector((state) => state.user.user)
   const dispatch = useAppDispatch()
+  const history = useHistory()
 
   if (!user) return null
 
@@ -108,14 +104,17 @@ export const UserArea = () => {
           </Row>
           <Row>
             <Resource width={135} label='Zen' color='green' count={user.resources.zen} />
-            <Resource width={100} label='Gold' color='orange' count={user.resources.gold} />
+            <Resource width={100} label='Gold' color='orange' count={user.resources.gold} onClick={() => history.push('/account/get-gold')} />
           </Row>
         </Resources>
       )}
       <Spacer />
       <UserMenu>
+        <Link to='/chats'>
+          <MenuCategory className={getActiveClassName('chats')}>Chats and Support</MenuCategory>
+        </Link>
         <Link to='/account'>
-          <MenuCategory className={getActiveClassName('account')}>Account Settings</MenuCategory>
+          <MenuCategory className={getActiveClassName('account')}>Account Management</MenuCategory>
         </Link>
         <Link to='/character'>
           <MenuCategory className={getActiveClassName('character')}>Character Management</MenuCategory>
@@ -123,9 +122,9 @@ export const UserArea = () => {
         <Link to='/extra'>
           <MenuCategory className={getActiveClassName('extra')}>Extra Features</MenuCategory>
         </Link>
-        <Link to='/admin'>
+        {/* <Link to='/admin'>
           <MenuCategory className={getActiveClassName('admin')}>Administration</MenuCategory>
-        </Link>
+        </Link> */}
       </UserMenu>
     </Wrapper>
   )
@@ -184,8 +183,7 @@ const ResourceWrapper = styled.div<{ width: number; height: number; image?: stri
   height: ${({ height }) => height}px;
   box-shadow: 0px 0 15px 0 rgba(0, 0, 0, 0.2);
   background-color: rgba(63, 85, 114, 0.1);
-  ${({ image }) =>
-    image && `background: rgba(63, 85, 114, 0.1) url('/images/items/${image}') no-repeat center center/80% 80%;`}
+  ${({ image }) => image && `background: rgba(63, 85, 114, 0.1) url('/images/items/${image}') no-repeat center center/80% 80%;`}
   display: flex;
   align-items: ${({ image }) => (!image ? `center` : `flex-start`)};
   justify-content: ${({ image }) => (!image ? `center` : `flex-end`)};
@@ -194,8 +192,7 @@ const ResourceWrapper = styled.div<{ width: number; height: number; image?: stri
 const ResourceValue = styled.span<{ color?: string }>`
   ${({ color }) => color && `color: ${color};`}
   margin-left: 5px;
-  ${({ color }) =>
-    !color && `padding: 0 2px; background-color: rgba(0, 0, 0, 0.5); border-radius: 5px; font-size: 11px;`}
+  ${({ color }) => !color && `padding: 0 2px; background-color: rgba(0, 0, 0, 0.5); border-radius: 5px; font-size: 11px;`}
 `
 
 const UserMenu = styled.div`

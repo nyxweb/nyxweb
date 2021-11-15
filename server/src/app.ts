@@ -9,7 +9,7 @@ import rateLimit from 'express-rate-limit'
 import cookieParser from 'cookie-parser'
 
 import { router } from 'routes'
-import { wsAttachListeners, wsAuthMiddleware, wsMultiConnectionMiddleware } from 'sockets'
+import { wsAttachListeners, wsAuthMiddleware } from 'sockets'
 import { errorHandler, logger } from 'tools'
 
 const PORT = process.env.PORT
@@ -28,7 +28,7 @@ app.get(['/health', '/api/health'], (_req, res) => res.json({ status: 'ok' }))
 app.use('/api', router)
 app.use(errorHandler)
 
-io.use(wsMultiConnectionMiddleware)
+// io.use(wsMultiConnectionMiddleware)
 io.use(wsAuthMiddleware)
 io.on('connection', wsAttachListeners)
 

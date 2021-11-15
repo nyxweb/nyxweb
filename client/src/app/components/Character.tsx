@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import ReactTooltip from 'react-tooltip'
 import { v4 as uuid } from 'uuid'
 
-import { ICharacter } from 'store/ranking'
+import { ICharacter } from 'typings'
 import { getGuildRank } from 'utils'
 
 interface Props {

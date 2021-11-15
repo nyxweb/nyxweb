@@ -1,10 +1,13 @@
 import { useEffect, useState, Fragment } from 'react'
-import { GuildMark, Character, MainContentBlock, ReactLoader } from 'app/components'
-import { useAppDispatch, useAppSelector } from 'store'
-import { HOF } from './HOF'
-import { getCharacters, ICharacter } from 'store/ranking'
 import styled from 'styled-components'
+
 import { getClassInfo } from 'utils'
+import { GuildMark, Character, MainContentBlock, ReactLoader } from 'app/components'
+import { HOF } from './HOF'
+
+import { useAppDispatch, useAppSelector } from 'store'
+import { getCharacters } from 'store/ranking'
+import { ICharacter } from 'typings'
 
 interface Filters {
   classes: number[]
