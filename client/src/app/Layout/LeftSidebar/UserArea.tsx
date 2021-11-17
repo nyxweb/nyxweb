@@ -7,6 +7,7 @@ import { Button } from 'app/components'
 import { useAppDispatch, useAppSelector } from 'store'
 import { userLogout } from 'store/user'
 import resources from 'utils/items.json'
+import { MissedNotificationBadge } from 'styles'
 
 interface Props {
   count: number
@@ -50,7 +51,14 @@ const Resource: React.FC<Props> = ({ count, width = 30, height = 30, color, labe
 
   return (
     <>
-      <ResourceWrapper onClick={onClick} width={width} height={height} image={itemImage} data-tip={`${resName}: ${count}`} data-for={tooltipId}>
+      <ResourceWrapper
+        onClick={onClick}
+        width={width}
+        height={height}
+        image={itemImage}
+        data-tip={`${resName}: ${count}`}
+        data-for={tooltipId}
+      >
         {label ? (
           <>
             {label}
@@ -67,10 +75,15 @@ const Resource: React.FC<Props> = ({ count, width = 30, height = 30, color, labe
 
 export const UserArea = () => {
   const user = useAppSelector((state) => state.user.user)
+  const chats = useAppSelector((state) => state.user.chat.recents)
   const dispatch = useAppDispatch()
   const history = useHistory()
 
   if (!user) return null
+
+  const missedChats = chats
+    ? chats.admins.reduce((prev, cur) => prev + cur.unseen, 0) + chats.list.reduce((prev, cur) => prev + cur.unseen, 0)
+    : 0
 
   const getActiveClassName = (path: string) => {
     if (window.location.pathname.startsWith(`/${path}`)) return 'active'
@@ -104,14 +117,23 @@ export const UserArea = () => {
           </Row>
           <Row>
             <Resource width={135} label='Zen' color='green' count={user.resources.zen} />
-            <Resource width={100} label='Gold' color='orange' count={user.resources.gold} onClick={() => history.push('/account/get-gold')} />
+            <Resource
+              width={100}
+              label='Gold'
+              color='orange'
+              count={user.resources.gold}
+              onClick={() => history.push('/account/get-gold')}
+            />
           </Row>
         </Resources>
       )}
       <Spacer />
       <UserMenu>
         <Link to='/chats'>
-          <MenuCategory className={getActiveClassName('chats')}>Chats and Support</MenuCategory>
+          <MenuCategory className={getActiveClassName('chats')}>
+            Chats and Support
+            {!!missedChats && <MissedNotificationBadge style={{ right: 30 }}>{missedChats}</MissedNotificationBadge>}
+          </MenuCategory>
         </Link>
         <Link to='/account'>
           <MenuCategory className={getActiveClassName('account')}>Account Management</MenuCategory>
@@ -183,7 +205,8 @@ const ResourceWrapper = styled.div<{ width: number; height: number; image?: stri
   height: ${({ height }) => height}px;
   box-shadow: 0px 0 15px 0 rgba(0, 0, 0, 0.2);
   background-color: rgba(63, 85, 114, 0.1);
-  ${({ image }) => image && `background: rgba(63, 85, 114, 0.1) url('/images/items/${image}') no-repeat center center/80% 80%;`}
+  ${({ image }) =>
+    image && `background: rgba(63, 85, 114, 0.1) url('/images/items/${image}') no-repeat center center/80% 80%;`}
   display: flex;
   align-items: ${({ image }) => (!image ? `center` : `flex-start`)};
   justify-content: ${({ image }) => (!image ? `center` : `flex-end`)};
@@ -192,7 +215,8 @@ const ResourceWrapper = styled.div<{ width: number; height: number; image?: stri
 const ResourceValue = styled.span<{ color?: string }>`
   ${({ color }) => color && `color: ${color};`}
   margin-left: 5px;
-  ${({ color }) => !color && `padding: 0 2px; background-color: rgba(0, 0, 0, 0.5); border-radius: 5px; font-size: 11px;`}
+  ${({ color }) =>
+    !color && `padding: 0 2px; background-color: rgba(0, 0, 0, 0.5); border-radius: 5px; font-size: 11px;`}
 `
 
 const UserMenu = styled.div`

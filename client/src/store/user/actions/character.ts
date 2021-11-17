@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import { toast, ToastContentProps } from 'react-toastify'
-import axios, { AxiosError } from 'axios'
-import { ICharacterClass, ICharacterPrivate } from 'typings'
+import { toast } from 'react-toastify'
+import axios from 'axios'
+import { ICharacterClass, ICharacterPrivate, ToastError } from 'typings'
 import { getClassInfo } from 'utils'
 
 export const getCharacters = createAsyncThunk('user/character/get', async () => {
@@ -16,7 +16,7 @@ export const characterSetMain = createAsyncThunk(
       pending: 'Setting main character...',
       success: `Main character has been set!`,
       error: {
-        render({ data }: ToastContentProps<AxiosError<{ error: string }>>) {
+        render({ data }: ToastError) {
           return data?.response?.data?.error || data?.message
         },
       },
@@ -38,7 +38,7 @@ export const characterChangeName = createAsyncThunk(
       pending: 'Changing character name...',
       success: `${character}'s name has been changed to ${newName}!`,
       error: {
-        render({ data }: ToastContentProps<AxiosError<{ error: string }>>) {
+        render({ data }: ToastError) {
           return data?.response?.data?.error || data?.message
         },
       },
@@ -62,7 +62,7 @@ export const characterChangeClass = createAsyncThunk(
       pending: 'Changing character class...',
       success: `${character} is now a ${classInfo.className.long}!`,
       error: {
-        render({ data }: ToastContentProps<AxiosError<{ error: string }>>) {
+        render({ data }: ToastError) {
           return data?.response?.data?.error || data?.message
         },
       },

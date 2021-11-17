@@ -3,10 +3,12 @@
 ```
 - Frontend
   - ReactJS
-  - Redux
+  - Redux Toolkit
+  - Styled Components
 
 - Backend
   - ExpressJS
+  - PrismaJS
   - Socket IO
-  - JSON Web Token
+  - JWT
 ```

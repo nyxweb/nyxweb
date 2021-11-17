@@ -18,7 +18,7 @@ export interface IChatGlobal {
   id: number
   author: string
   message: string
-  date: Date
+  date: string
 }
 
 export type IChatDM = IChatGlobal & {

@@ -4,8 +4,10 @@ import axios from 'axios'
 
 import { Button, MainContentBlock } from 'app/components'
 import styled from 'styled-components'
+import { ToastError } from 'typings'
 
 interface IForm {
+  email: string
   currentPassword: string
   newPassword: string
   repeatNewPassword: string
@@ -13,31 +15,42 @@ interface IForm {
 
 export const ChangePassword = () => {
   const [form, setForm] = useState<IForm>({
+    email: '',
     currentPassword: '',
     newPassword: '',
     repeatNewPassword: '',
   })
-  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     if (form.newPassword !== form.repeatNewPassword) return toast.error(`Entered passwords do not match.`)
 
-    try {
-      setLoading(true)
-      await axios.post('/users/password', form)
-      toast.success(`Your password was changed successfully!`)
-    } catch (error: any) {
-      toast.error(error.response?.data.error || error.message)
-    } finally {
-      setLoading(false)
-    }
+    await toast
+      .promise(axios.post('/users/account/password', form), {
+        pending: 'Changing password...',
+        success: 'Your password has been changed!',
+        error: {
+          render({ data }: ToastError) {
+            return data?.response?.data?.error || data?.message
+          },
+        },
+      })
+      .catch(() => {})
   }
 
   return (
     <MainContentBlock>
       <Form onSubmit={handleSubmit}>
+        <input type='text' name='username' style={{ display: 'none' }} />
+        <input type='password' name='password' style={{ display: 'none' }} />
+        <input
+          type='text'
+          placeholder='E-Mail Address'
+          value={form.email}
+          onChange={(e) => setForm((form) => ({ ...form, email: e.target.value }))}
+          required
+        />
         <input
           type='password'
           placeholder='Current password'
@@ -59,7 +72,7 @@ export const ChangePassword = () => {
           onChange={(e) => setForm((form) => ({ ...form, repeatNewPassword: e.target.value }))}
           required
         />
-        <Button value='Change Password' type='submit' loading={loading} />
+        <Button value='Change Password' type='submit' />
       </Form>
     </MainContentBlock>
   )

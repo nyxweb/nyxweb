@@ -1,5 +1,5 @@
 import { Request, RequestHandler } from 'express'
-import { nyx_chat_global } from '@prisma/client'
+import { nyx_chat_dms, nyx_chat_global } from '@prisma/client'
 import { prisma } from 'db'
 import { getConnectedUsers } from 'sockets'
 import validator from 'validator'
@@ -34,9 +34,12 @@ export const getChatGlobal: RequestHandler = async (_req: Request, res, next) =>
 
 export const getChatDMs: RequestHandler = async (req: Request, res, next) => {
   try {
-    const { character } = req.params
+    const { character } = req.query
     if (typeof character !== 'string' || !validator.isLength(character, { min: 1, max: 10 }))
       return res.status(401).json({ error: 'This user no longer exists.' })
+
+    if (character === req.user!.main_character)
+      return res.status(400).json({ error: 'You want to query your own messages to yourself? xD' })
 
     const chats = await prisma.nyx_chat_dms.findMany({
       select: {
@@ -48,14 +51,23 @@ export const getChatDMs: RequestHandler = async (req: Request, res, next) => {
         seen: true,
       },
       where: {
-        OR: [{ author: req.user!.main_character! }, { receiver: character }],
-        AND: { OR: [{ author: character }, { receiver: req.user!.main_character! }] },
+        OR: [
+          { AND: [{ author: req.user!.main_character! }, { receiver: character }] },
+          { AND: [{ author: character }, { receiver: req.user!.main_character! }] },
+        ],
       },
       orderBy: [{ date: 'asc' }],
       take: 100,
     })
 
-    res.json(chats)
+    const groupedByDay = chats.reduce<Record<string, nyx_chat_dms[]>>((prev, cur) => {
+      const day = cur.date.toISOString().substring(0, 10)
+      if (prev[day]) prev[day].push(cur)
+      else prev[day] = [cur]
+      return prev
+    }, {})
+
+    res.json(groupedByDay)
   } catch (error) {
     next(error)
   }

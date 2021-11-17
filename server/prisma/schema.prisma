@@ -820,3 +820,10 @@ model nyx_chat_global {
 
   @@index([author], map: "IX_nyx_chat_global")
 }
+
+model nyx_chat_blocked {
+  id      Int      @id(map: "PK_nyx_chat_blocked") @default(autoincrement())
+  blocker String   @db.VarChar(10)
+  blocked String   @db.VarChar(10)
+  date    DateTime @db.DateTime
+}

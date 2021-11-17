@@ -11,7 +11,7 @@
     "swagger": "nodemon --watch ./openapi.yaml ./src/swagger.ts"
   },
   "dependencies": {
-    "@prisma/client": "^3.4.2",
+    "@prisma/client": "^3.5.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
@@ -19,8 +19,6 @@
     "express-rate-limit": "^5.5.0",
     "jsonwebtoken": "^8.5.1",
     "mssql": "^7.2.1",
-    "nodemon": "^2.0.14",
-    "prisma": "^3.4.2",
     "reflect-metadata": "^0.1.13",
     "socket.io": "^4.3.1",
     "validator": "^13.6.0",
@@ -38,6 +36,8 @@
     "@types/validator": "^13.6.3",
     "@types/ws": "^8.2.0",
     "@types/yamljs": "^0.2.31",
+    "nodemon": "^2.0.15",
+    "prisma": "^3.5.0",
     "swagger-ui-express": "^4.1.6",
     "ts-node": "^10.4.0",
     "tsconfig-paths": "^3.11.0",

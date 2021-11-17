@@ -34,7 +34,7 @@ export const login: RequestHandler = async (req, res, next) => {
           },
         },
       },
-      where: { memb___id: username },
+      where: { memb___id: username, memb__pwd: password },
     })
 
     if (!user) return res.status(400).json({ error: 'Wrong Username or Password.' })

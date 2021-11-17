@@ -12,7 +12,7 @@ export interface UserState {
     recents: IChatRecents | null
     chats: {
       global: Record<string, IChatGlobal[]> | null
-      dms: Record<string, IChatDM[]> | null
+      dms: Record<string, Record<string, IChatDM[]>> | null
     }
   }
 }

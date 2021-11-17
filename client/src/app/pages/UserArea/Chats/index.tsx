@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import Moment from 'react-moment'
 import moment from 'moment'
@@ -7,10 +8,18 @@ import { v4 as uuid } from 'uuid'
 import { Button, InfoBlob, MainContentBlock, ReactLoader } from 'app/components'
 import { getClassInfo } from 'utils'
 import { useAppDispatch, useAppSelector } from 'store'
-import { useHistory } from 'react-router-dom'
-import { addChatGlobal, getChatGlobal, getChatRecents } from 'store/user'
-import { IChatRecent } from 'typings'
-import { socketChatEmitGlobal, SocketIO } from 'store/socket'
+import {
+  addChatDM,
+  addChatGlobal,
+  emitChatDM,
+  emitChatGlobal,
+  getChatDMs,
+  getChatGlobal,
+  getChatRecents,
+} from 'store/user'
+import { SocketIO } from 'store/socket'
+import { IChatDM, IChatGlobal, IChatRecent } from 'typings'
+import { MissedNotificationBadge } from 'styles'
 
 interface Props {
   global?: boolean
@@ -33,7 +42,11 @@ const Contact: React.FC<Props> = ({ global, onClick, active, recent }) => {
     <ContactWrapper onClick={onClick} active={active}>
       <ContactIcon online={recent!.is_online} image={`/images/classes/${classInfo.classImage.short}`} global={global} />{' '}
       {recent!.name}
-      {!!recent!.unseen && <Missed>{recent!.unseen}</Missed>}
+      {!!recent?.unseen && (
+        <MissedNotificationBadge style={{ right: '-9px' }}>
+          {recent.unseen > 9 ? '9+' : recent.unseen}
+        </MissedNotificationBadge>
+      )}
     </ContactWrapper>
   )
 }
@@ -41,7 +54,7 @@ const Contact: React.FC<Props> = ({ global, onClick, active, recent }) => {
 export const Chats = () => {
   const [selected, setSelected] = useState<string | null>(null)
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
-  const chatEndRef = useRef<HTMLDivElement>(null)
+  const chatBoxRef = useRef<HTMLDivElement>(null)
   const { user, chat } = useAppSelector((state) => state.user)
   const history = useHistory()
   const dispatch = useAppDispatch()
@@ -50,33 +63,55 @@ export const Chats = () => {
     if (user?.main_character) {
       dispatch(getChatRecents())
       dispatch(getChatGlobal())
+      SocketIO.on('chat global message', (chat: IChatGlobal) => dispatch(addChatGlobal(chat)))
+      SocketIO.on('chat private message', (chat: IChatDM) => dispatch(addChatDM(chat)))
+    }
+
+    return () => {
+      SocketIO.off('chat global message')
+      SocketIO.off('chat private message')
     }
   }, [dispatch, user?.main_character])
 
   useEffect(() => {
-    SocketIO.on('chat global message', (message) => dispatch(addChatGlobal(message)))
-  }, [dispatch])
+    if (selected !== null && !chat.chats.dms?.[selected]) dispatch(getChatDMs(selected))
+  }, [dispatch, selected, chat.chats.dms])
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [chat.chats.global])
+    if (selected === null) {
+      chatBoxRef.current?.scroll({
+        top: chatBoxRef.current?.scrollHeight,
+        behavior: 'smooth',
+      })
+    }
+  }, [chat.chats.global, selected])
+
+  useEffect(() => {
+    if (selected !== null) {
+      chatBoxRef.current?.scroll({
+        top: chatBoxRef.current?.scrollHeight,
+        behavior: 'smooth',
+      })
+    }
+  }, [chat.chats.dms, selected])
 
   const renderChatMessages = useCallback(() => {
-    if (!chat.chats.global) return null
+    const messages = selected === null ? chat.chats.global : chat.chats.dms?.[selected]
+    if (!messages) return null
 
-    return Object.keys(chat.chats.global).map((day) => {
+    return Object.keys(messages).map((day) => {
       let sender: string
       return (
         <div key={day}>
           <ConversationDay>
             <span>{moment(new Date(day)).format('MMMM Do, YYYY')}</span>
           </ConversationDay>
-          {chat.chats.global![day].map(({ message, date, author }) => {
+          {messages?.[day].map(({ message, date, author }) => {
             const output: JSX.Element[] = []
             if (sender !== author) {
               output.push(
                 <Sender key={uuid()}>
-                  <span>{author}</span> <Moment fromNow>{date}</Moment>
+                  <span className='author'>{author}</span> <Moment fromNow>{date}</Moment>
                 </Sender>,
               )
               sender = author
@@ -87,13 +122,15 @@ export const Chats = () => {
         </div>
       )
     })
-  }, [chat.chats.global])
+  }, [chat.chats, selected])
 
   const handleMessageSend = () => {
-    if (!textAreaRef.current?.value) return
+    const message = textAreaRef.current?.value
+    if (!message) return
 
-    dispatch(socketChatEmitGlobal(textAreaRef.current.value))
-    console.log(`sending`, { message: textAreaRef.current.value })
+    if (selected === null) dispatch(emitChatGlobal(message))
+    else dispatch(emitChatDM({ message, receiver: selected, author: user?.main_character! }))
+
     textAreaRef.current.value = ''
   }
 
@@ -163,10 +200,7 @@ export const Chats = () => {
                 </div>
               </Toolbar>
             )}
-            <Conversation>
-              {renderChatMessages()}
-              <div ref={chatEndRef} />
-            </Conversation>
+            <Conversation ref={chatBoxRef}>{renderChatMessages()}</Conversation>
             <TextArea>
               <textarea
                 placeholder='Start typing here...'
@@ -273,7 +307,7 @@ const Sender = styled.div`
   color: #5e7292;
   margin-top: 10px;
 
-  span {
+  .author {
     color: #9eb7df;
     font-size: 15px;
     margin-right: 5px;
@@ -325,20 +359,6 @@ const ContactWrapper = styled.div<{ active: boolean }>`
   &:first-of-type {
     margin-top: 0;
   }
-`
-
-const Missed = styled.div`
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  right: -9px;
-  width: 18px;
-  height: 18px;
-  border-radius: 8px;
-  background-color: #af1212;
-  color: #e2cece;
-  font-size: 10px;
 `
 
 const ContactIcon = styled.div<{ online?: boolean; image: string; global?: boolean }>`

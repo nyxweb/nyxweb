@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { UserState } from './typings'
 import { SocketIO } from '../socket'
-import { IChatGlobal } from 'typings'
+import { IChatDM, IChatGlobal } from 'typings'
 
 import { userLogin, userLogout, userVerify } from './actions/auth'
 import { getCharacters, characterSetMain, characterChangeName, characterChangeClass } from './actions/character'
-import { getChatGlobal, getChatRecents } from './actions/chat'
+import { getChatRecents, getChatGlobal, getChatDMs } from './actions/chat'
 
 const initialState: UserState = {
   authorized: 'loading',
@@ -27,12 +27,41 @@ export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
+    emitChatGlobal(_state, { payload }) {
+      SocketIO.emit('chat global message', payload)
+    },
+    emitChatDM(state, { payload }: PayloadAction<{ message: string; receiver: string; author: string }>) {
+      const day = new Date().toISOString().substring(0, 10)
+      const chat: IChatDM = { ...payload, date: new Date().toISOString(), seen: 0, id: 1 }
+
+      SocketIO.emit('chat private message', { message: payload.message, character: payload.receiver })
+
+      if (!state.chat.chats.dms) return
+      if (!state.chat.chats.dms[payload.receiver]) state.chat.chats.dms[payload.receiver] = { [day]: [chat] }
+      else {
+        if (state.chat.chats.dms[payload.receiver][day]) state.chat.chats.dms[payload.receiver][day].push(chat)
+        else state.chat.chats.dms[payload.receiver][day] = [chat]
+      }
+    },
     addChatGlobal(state, { payload }: PayloadAction<IChatGlobal>) {
       if (!state.chat.chats.global) return
       const day = new Date(payload.date).toISOString().substring(0, 10)
 
       if (state.chat.chats.global[day]) state.chat.chats.global[day].push(payload)
       else state.chat.chats.global[day] = [payload]
+    },
+    addChatDM(state, { payload }: PayloadAction<IChatDM>) {
+      if (!state.chat.chats.dms) return
+      const day = new Date(payload.date).toISOString().substring(0, 10)
+
+      if (!state.chat.chats.dms[payload.author])
+        state.chat.chats.dms[payload.author] = {
+          [day]: [payload],
+        }
+      else {
+        if (state.chat.chats.dms[payload.author][day]) state.chat.chats.dms[payload.author][day].push(payload)
+        else state.chat.chats.dms[payload.author][day] = [payload]
+      }
     },
   },
   extraReducers(builder) {
@@ -104,16 +133,26 @@ export const userSlice = createSlice({
       })
 
       .addCase(getChatRecents.fulfilled, (state, { payload }) => {
-        state.chat.recents = payload
+        state.chat.recents = {
+          admins: payload.admins.filter((admin) => admin.name !== state.user?.main_character),
+          list: payload.list.filter((char) => char.name !== state.user?.main_character),
+        }
       })
 
       .addCase(getChatGlobal.fulfilled, (state, { payload }) => {
         state.chat.chats.global = payload
       })
+
+      .addCase(getChatDMs.fulfilled, (state, { payload }) => {
+        state.chat.chats.dms = {
+          ...(state.chat.chats.dms || {}),
+          [payload.character]: payload.dms,
+        }
+      })
   },
 })
 
-export const { addChatGlobal } = userSlice.actions
+export const { addChatGlobal, addChatDM, emitChatDM, emitChatGlobal } = userSlice.actions
 export default userSlice.reducer
 export * from './typings'
 export * from './actions'

@@ -1,8 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import { toast, ToastContentProps } from 'react-toastify'
-import axios, { AxiosError } from 'axios'
+import { toast } from 'react-toastify'
+import axios from 'axios'
 import { UserLoginInput } from '../typings'
-import { IUser } from 'typings'
+import { IUser, ToastError } from 'typings'
 
 export const userLogin = createAsyncThunk('user/login', async ({ username, password }: UserLoginInput) => {
   const { data } = await toast.promise(
@@ -12,12 +12,12 @@ export const userLogin = createAsyncThunk('user/login', async ({ username, passw
     }),
     {
       pending: 'Login in progress...',
+      success: `Welcome back, ${username}!`,
       error: {
-        render({ data }: ToastContentProps<AxiosError<{ error: string }>>) {
+        render({ data }: ToastError) {
           return data?.response?.data?.error || data?.message
         },
       },
-      success: `Welcome back, ${username}!`,
     },
   )
 

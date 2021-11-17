@@ -10,12 +10,7 @@ const initialState: SocketState = {}
 export const socketSlice = createSlice({
   name: 'socket',
   initialState,
-  reducers: {
-    socketChatEmitGlobal(_state, { payload }) {
-      SocketIO.emit('chat global message', payload)
-    },
-  },
+  reducers: {},
 })
 
-export const { socketChatEmitGlobal } = socketSlice.actions
 export default socketSlice.reducer
